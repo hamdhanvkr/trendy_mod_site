@@ -1,19 +1,15 @@
-// vite.config.js
 import { defineConfig } from 'vite'
-import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
+import { fileURLToPath, URL } from 'node:url'
+import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
-  plugins: [
-    react(),  // Add React plugin
-    tailwindcss(),
-  ],
-  optimizeDeps: {
-    include: ['react', 'react-dom']
-  },
-  server: {
-    hmr: {
-      overlay: false  // Optional: disable HMR error overlay
-    }
-  }
+    plugins: [react(), tailwindcss(),],
+    resolve: {
+        alias: {
+            '@': fileURLToPath(
+                new URL('./src', import.meta.url)
+            ),
+        },
+    },
 })

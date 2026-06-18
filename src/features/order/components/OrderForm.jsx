@@ -1,0 +1,327 @@
+// src/features/order/components/OrderForm.jsx
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import {
+    X, Send, MapPin, Truck, CheckCircle, User, Phone,
+    Home, Navigation, CreditCard, ShieldCheck, AlertCircle, ArrowLeft
+} from 'lucide-react';
+
+const OrderForm = ({ isOpen, onClose, cart, total, onOrderComplete }) => {
+    const [formData, setFormData] = useState({
+        name: '',
+        address: '',
+        phone: '',
+        pincode: '',
+        location: 'tamilnadu',
+        landmark: '',
+        instructions: ''
+    });
+    const [focusedField, setFocusedField] = useState(null);
+    const [status, setStatus] = useState('idle');
+
+    // Prevent body scroll when form is open
+    useEffect(() => {
+        if (isOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [isOpen]);
+
+    const deliveryCharge = formData.location === 'tamilnadu' ? 80 : 150;
+    const subtotal = total;
+    const isFreeDelivery = subtotal >= 1000;
+    const grandTotal = isFreeDelivery ? subtotal : subtotal + deliveryCharge;
+    const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+
+    const handlePincodeChange = (e) => {
+        const pincode = e.target.value;
+        setFormData({ ...formData, pincode });
+
+        if (pincode.length === 6) {
+            const firstDigit = pincode.charAt(0);
+            if (firstDigit === '6') {
+                setFormData(prev => ({ ...prev, location: 'tamilnadu' }));
+            } else {
+                setFormData(prev => ({ ...prev, location: 'outside' }));
+            }
+        }
+    };
+
+    const generateWhatsAppMessage = () => {
+        let message = "🤖 TrendyMod - New Order\n\n";
+        message += "━━━━━━━━━━━━━━━━━━━━━━\n";
+        message += "👤 CUSTOMER DETAILS\n";
+        message += "━━━━━━━━━━━━━━━━━━━━━━\n";
+        message += "Name: " + formData.name + "\n";
+        message += "Phone: " + formData.phone + "\n";
+        message += "Address: " + formData.address + "\n";
+        message += "Landmark: " + (formData.landmark || 'N/A') + "\n";
+        message += "Pincode: " + formData.pincode + "\n";
+        message += "Region: " + (formData.location === 'tamilnadu' ? 'Tamil Nadu' : 'Outside Tamil Nadu') + "\n\n";
+
+        message += "━━━━━━━━━━━━━━━━━━━━━━\n";
+        message += "🛒 ORDER ITEMS\n";
+        message += "━━━━━━━━━━━━━━━━━━━━━━\n";
+
+        cart.forEach((item, idx) => {
+            message += (idx + 1) + ". 🎁 " + item.name + "\n";
+            message += "   Qty: " + item.quantity + " × ₹" + item.price + " = ₹" + (item.price * item.quantity) + "\n";
+        });
+
+        message += "━━━━━━━━━━━━━━━━━━━━━━\n";
+        message += "💰 ORDER SUMMARY\n";
+        message += "━━━━━━━━━━━━━━━━━━━━━━\n";
+        message += "Subtotal: ₹" + subtotal + "\n";
+
+        if (isFreeDelivery) {
+            message += "Delivery: 🎉 FREE (Above ₹1000)\n";
+        } else {
+            message += "Delivery: ₹" + deliveryCharge + " (" + (formData.location === 'tamilnadu' ? 'Tamil Nadu' : 'Outside Tamil Nadu') + ")\n";
+        }
+
+        message += "────────────────────\n";
+        message += "Grand Total: ₹" + grandTotal + "\n";
+        message += "Total Items: " + totalItems + "\n\n";
+
+        if (formData.instructions) {
+            message += "📝 Instructions: " + formData.instructions + "\n\n";
+        }
+
+        message += "━━━━━━━━━━━━━━━━━━━━━━\n";
+        message += "🙏 Thank you for choosing TrendyMod!";
+
+        return encodeURIComponent(message);
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+
+        if (!formData.name.trim()) return alert("Please enter your full name");
+        if (!formData.address.trim()) return alert("Please enter your delivery address");
+        if (!formData.phone.trim()) return alert("Please enter your phone number");
+        if (!/^\d{10}$/.test(formData.phone.trim())) return alert("Please enter a valid 10-digit phone number");
+        if (!/^\d{6}$/.test(formData.pincode.trim())) return alert("Please enter a valid 6-digit pincode");
+
+        setStatus('sending');
+        await new Promise(resolve => setTimeout(resolve, 500));
+
+        const message = generateWhatsAppMessage();
+        const whatsappUrl = `https://wa.me/919629601141?text=${message}`;
+
+        window.open(whatsappUrl, '_blank');
+        setStatus('sent');
+
+        setTimeout(() => {
+            setFormData({
+                name: '', address: '', phone: '', pincode: '',
+                location: 'tamilnadu', landmark: '', instructions: ''
+            });
+            setStatus('idle');
+            onOrderComplete();
+            onClose();
+        }, 2000);
+    };
+
+    const inputFields = [
+        { name: 'name', label: 'Full Name', icon: User, type: 'text', placeholder: 'Enter your full name' },
+        { name: 'phone', label: 'Phone Number', icon: Phone, type: 'tel', placeholder: '9876543210', maxLength: 10 },
+        { name: 'pincode', label: 'Pincode', icon: Navigation, type: 'text', placeholder: '600001', maxLength: 6 },
+        { name: 'address', label: 'Delivery Address', icon: Home, type: 'textarea', placeholder: 'House No., Street name, Area, City' },
+        { name: 'landmark', label: 'Landmark (Optional)', icon: MapPin, type: 'text', placeholder: 'Nearby school, shop or landmark' },
+        { name: 'instructions', label: 'Delivery Instructions (Optional)', icon: AlertCircle, type: 'textarea', placeholder: 'Leave with neighbor, call before delivery, etc.' }
+    ];
+
+    return (
+        <AnimatePresence>
+            {isOpen && (
+                <>
+                    {/* Backdrop */}
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        exit={{ opacity: 0 }}
+                        onClick={onClose}
+                        className="fixed inset-0 bg-slate-900/50 backdrop-blur-md z-[60] transition-opacity"
+                    />
+
+                    {/* Main Sidebar Panel Container */}
+                    <motion.div
+                        initial={{ x: '100%' }}
+                        animate={{ x: 0 }}
+                        exit={{ x: '100%' }}
+                        transition={{ type: 'tween', duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+                        className="fixed right-0 top-0 h-full w-full sm:max-w-md bg-white shadow-2xl z-[60] flex flex-col border-l border-slate-100"
+                    >
+                        {/* Static Clean Header Section */}
+                        <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50 shrink-0">
+                            <div className="min-w-0 pr-2">
+                                <div className="flex items-center gap-2">
+                                    <button
+                                        onClick={onClose}
+                                        className="flex items-center gap-1 text-xs font-bold text-blue-600 hover:text-blue-700 transition-colors"
+                                    >
+                                        <ArrowLeft size={14} /> Back
+                                    </button>
+                                    <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight truncate">Shipping Info</h2>
+                                    <span className="text-xs font-semibold px-2 py-0.5 bg-blue-50 text-blue-700 border border-blue-100 rounded-full flex-shrink-0">
+                                        Step 2
+                                    </span>
+                                </div>
+                                <p className="text-[11px] sm:text-xs text-slate-500 mt-1 font-medium truncate">
+                                    Complete details to finalize your WhatsApp dispatch
+                                </p>
+                            </div>
+                            <button
+                                onClick={onClose}
+                                className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all flex-shrink-0"
+                            >
+                                <X size={18} />
+                            </button>
+                        </div>
+
+                        {/* SINGLE Scrolling Content Wrapper containing Form + Footer elements */}
+                        <div className="flex-1 overflow-y-auto bg-white">
+                            {status === 'sent' ? (
+                                <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="h-full min-h-[400px] flex flex-col items-center justify-center text-center px-4">
+                                    <div className="w-14 h-14 rounded-full bg-emerald-50 flex items-center justify-center border border-emerald-100 mb-3 text-emerald-500">
+                                        <CheckCircle size={24} />
+                                    </div>
+                                    <h3 className="text-sm sm:text-base font-bold text-slate-900">Order Dispatched! 🎉</h3>
+                                    <p className="text-xs text-slate-400 max-w-[240px] mt-1">
+                                        WhatsApp application has successfully generated your order request link.
+                                    </p>
+                                </motion.div>
+                            ) : status === 'sending' ? (
+                                <div className="h-full min-h-[400px] flex flex-col items-center justify-center text-center">
+                                    <div className="w-10 h-10 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mb-3"></div>
+                                    <p className="text-xs text-slate-500 font-medium">Connecting to secure fulfillment gateway...</p>
+                                </div>
+                            ) : (
+                                <form id="order-form" onSubmit={handleSubmit} className="p-4 sm:p-5 space-y-4">
+                                    {/* Logistics Dynamic Banner */}
+                                    <div className="bg-blue-50/40 border border-blue-100/60 rounded-xl p-3 flex items-start gap-2.5">
+                                        <Truck size={15} className="text-blue-600 mt-0.5 flex-shrink-0" />
+                                        <div className="text-[11px] sm:text-xs">
+                                            <p className="font-bold text-slate-800">Fulfillment Verification</p>
+                                            <p className="text-slate-500 mt-0.5 font-medium">
+                                                {isFreeDelivery
+                                                    ? "✨ Bulk Tier Reward: Zero-fee shipping confirmed!"
+                                                    : "Standard shipping metrics apply to this package destination."}
+                                            </p>
+                                        </div>
+                                    </div>
+
+                                    {/* Form Fields Stack */}
+                                    <div className="space-y-3.5">
+                                        {inputFields.map((field) => (
+                                            <div key={field.name} className="space-y-1">
+                                                <label className="block text-xs font-bold text-slate-700 ml-0.5">
+                                                    {field.label} {!field.name.includes('Optional') && <span className="text-red-500">*</span>}
+                                                </label>
+                                                <div className="relative flex items-center">
+                                                    <div className={`absolute left-3 text-slate-400 transition-colors pointer-events-none ${focusedField === field.name ? 'text-blue-600' : ''}`}>
+                                                        <field.icon size={15} />
+                                                    </div>
+                                                    {field.type === 'textarea' ? (
+                                                        <textarea
+                                                            name={field.name}
+                                                            value={formData[field.name]}
+                                                            onChange={(e) => setFormData({ ...formData, [field.name]: e.target.value })}
+                                                            onFocus={() => setFocusedField(field.name)}
+                                                            onBlur={() => setFocusedField(null)}
+                                                            rows={field.name === 'instructions' ? 2 : 3}
+                                                            className="w-full pl-9 pr-3 py-2.5 border border-slate-200 focus:border-blue-500 rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none transition-all resize-none shadow-sm shadow-slate-100/50"
+                                                            placeholder={field.placeholder}
+                                                            required={!field.name.includes('Optional')}
+                                                        />
+                                                    ) : (
+                                                        <input
+                                                            type={field.type}
+                                                            name={field.name}
+                                                            value={formData[field.name]}
+                                                            onChange={(e) => field.name === 'pincode' ? handlePincodeChange(e) : setFormData({ ...formData, [field.name]: e.target.value })}
+                                                            onFocus={() => setFocusedField(field.name)}
+                                                            onBlur={() => setFocusedField(null)}
+                                                            maxLength={field.maxLength}
+                                                            className="w-full h-10 pl-9 pr-3 border border-slate-200 focus:border-blue-500 rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none transition-all shadow-sm shadow-slate-100/50 flex items-center"
+                                                            placeholder={field.placeholder}
+                                                            required={!field.name.includes('Optional')}
+                                                        />
+                                                    )}
+                                                </div>
+                                            </div>
+                                        ))}
+
+                                        {/* Dropdown Field */}
+                                        <div className="space-y-1">
+                                            <label className="block text-xs font-bold text-slate-700 ml-0.5">
+                                                Delivery Destination Region <span className="text-red-500">*</span>
+                                            </label>
+                                            <div className="relative flex items-center">
+                                                <select
+                                                    value={formData.location}
+                                                    onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                                                    className="w-full h-10 pl-9 pr-8 bg-white border border-slate-200 focus:border-blue-500 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none transition-all shadow-sm shadow-slate-100/50 appearance-none cursor-pointer"
+                                                >
+                                                    <option value="tamilnadu">Tamil Nadu Region (Standard: ₹80)</option>
+                                                    <option value="outside">Domestic - Rest of India (Standard: ₹150)</option>
+                                                </select>
+                                                <MapPin className="absolute left-3 text-slate-400 pointer-events-none" size={15} />
+                                                <div className="absolute right-3 pointer-events-none text-slate-400">
+                                                    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Inline, Non-Sticky Footer Container Summary Layout */}
+                                    <div className="border-t border-slate-100 pt-5 mt-6 bg-white">
+                                        <div className="space-y-2 mb-4">
+                                            <div className="flex justify-between text-xs font-semibold text-slate-500">
+                                                <span>Items Base Subtotal</span>
+                                                <span className="text-slate-900">₹{subtotal}</span>
+                                            </div>
+                                            <div className="flex justify-between text-xs font-semibold text-slate-500">
+                                                <span>Regional Shipping Costs</span>
+                                                <span className={isFreeDelivery ? "text-blue-600 font-bold" : "text-slate-900"}>
+                                                    {isFreeDelivery ? "₹0" : `₹${deliveryCharge}`}
+                                                </span>
+                                            </div>
+                                            <div className="border-t border-slate-200/60 pt-2.5 mt-1">
+                                                <div className="flex justify-between items-baseline">
+                                                    <span className="text-xs sm:text-sm font-bold text-slate-900">Total Invoice Due</span>
+                                                    <span className="text-lg sm:text-xl font-black text-blue-600">₹{grandTotal}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+
+                                        {/* Submit Action Button */}
+                                        <button
+                                            type="submit"
+                                            form="order-form"
+                                            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 sm:py-3.5 px-4 rounded-xl font-bold text-xs sm:text-sm tracking-wide shadow-md shadow-blue-600/10 hover:shadow-lg transition-all flex items-center justify-center gap-2"
+                                        >
+                                            Confirm & Open WhatsApp
+                                            <Send size={14} className="ml-0.5" />
+                                        </button>
+
+                                        <div className="flex items-center justify-center gap-1.5 text-[10px] sm:text-[11px] text-slate-400 font-medium text-center mt-3 pb-4">
+                                            <ShieldCheck size={12} className="text-blue-600 flex-shrink-0" />
+                                            <span className="truncate">End-to-End Encryption • Secure Order Forwarding</span>
+                                        </div>
+                                    </div>
+                                </form>
+                            )}
+                        </div>
+                    </motion.div>
+                </>
+            )}
+        </AnimatePresence>
+    );
+};
+
+export default OrderForm;
