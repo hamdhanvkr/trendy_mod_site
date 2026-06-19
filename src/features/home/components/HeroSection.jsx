@@ -1,4 +1,3 @@
-// src/features/home/components/HeroSection.jsx - Updated
 import { useState, useEffect } from 'react';
 import { motion, useSpring } from 'framer-motion';
 import { ArrowRight, Sparkles, Play, Gift, Star, Target, ShoppingBag, Paintbrush, Rocket, Crown, Zap, Heart, Camera, Music, BookOpen, Palette } from 'lucide-react';
@@ -37,11 +36,11 @@ const HeroSection = ({ onShopNow, onViewCollection }) => {
     ];
 
     return (
-        <div className="relative overflow-hidden bg-white min-h-[650px] flex items-center selection:bg-indigo-600 selection:text-white">
+        <div className="relative overflow-hidden bg-white min-h-162.5 flex items-center selection:bg-indigo-600 selection:text-white">
 
             {/* Grid Pattern */}
             <div className="absolute inset-0 z-0 pointer-events-none">
-                <div className="absolute inset-0 bg-[linear-gradient(to_right,#cbd5e120_1px,transparent_1px),linear-gradient(to_bottom,#cbd5e120_1px,transparent_1px)] bg-[size:24px_24px] sm:bg-[size:32px_32px] hidden sm:block opacity-60 md:opacity-80 lg:opacity-100" />
+                <div className="absolute inset-0 bg-[linear-gradient(to_right,#cbd5e120_1px,transparent_1px),linear-gradient(to_bottom,#cbd5e120_1px,transparent_1px)] bg-size-[24px_24px] sm:bg-size-[32px_32px] hidden sm:block opacity-60 md:opacity-80 lg:opacity-100" />
             </div>
 
             {/* Floating Elements */}
@@ -94,7 +93,7 @@ const HeroSection = ({ onShopNow, onViewCollection }) => {
                         {/* Main Headline */}
                         <h1 className="text-4xl sm:text-5xl md:text-6xl xl:text-7xl font-black tracking-tight leading-[1.10] text-slate-900">
                             Bring Joy to <br />
-                            <span className="bg-gradient-to-r from-indigo-600 via-blue-600 to-sky-500 bg-clip-text text-transparent">
+                            <span className="bg-linear-to-r from-indigo-600 via-blue-600 to-sky-500 bg-clip-text text-transparent">
                                 Every Child
                             </span>
                         </h1>
@@ -150,10 +149,10 @@ const HeroSection = ({ onShopNow, onViewCollection }) => {
                         onMouseEnter={() => setIsHovering(true)}
                         onMouseLeave={() => setIsHovering(false)}
                     >
-                        <div className="relative w-full max-w-[290px] sm:max-w-[360px] md:max-w-[400px] aspect-square">
+                        <div className="relative w-full max-w-72.5 sm:max-w-90 md:max-w-100 aspect-square">
                             <div className="relative w-full h-full">
                                 <motion.div
-                                    className="relative z-10 w-full h-full rounded-full overflow-hidden border-4 sm:border-[6px] border-white bg-gradient-to-b from-slate-50 to-slate-100 shadow-[0_16px_36px_-12px_rgba(0,0,0,0.08)] flex items-center justify-center backdrop-blur-sm"
+                                    className="relative z-10 w-full h-full rounded-full overflow-hidden border-4 sm:border-[6px] border-white bg-linear-to-b from-slate-50 to-slate-100 shadow-[0_16px_36px_-12px_rgba(0,0,0,0.08)] flex items-center justify-center backdrop-blur-sm"
                                     animate={{
                                         rotate: isHovering ? [0, 1, -1, 0.5, -0.5, 0] : 0,
                                         scale: isHovering ? 1.01 : 1
@@ -195,7 +194,7 @@ const HeroSection = ({ onShopNow, onViewCollection }) => {
                                 </motion.div>
 
                                 <motion.div
-                                    className="absolute z-30 -left-6 sm:-left-8 bg-gradient-to-br from-rose-500 via-rose-600 to-rose-700 text-white shadow-[0_20px_40px_-8px_rgba(244,63,94,0.35)] rounded-2xl p-3 sm:p-4 border-2 border-white/30"
+                                    className="absolute z-30 -left-6 sm:-left-8 bg-linear-to-br from-rose-500 via-rose-600 to-rose-700 text-white shadow-[0_20px_40px_-8px_rgba(244,63,94,0.35)] rounded-2xl p-3 sm:p-4 border-2 border-white/30"
                                     style={{ top: '22%' }}
                                     animate={{
                                         scale: isHovering ? 1.06 : 1,

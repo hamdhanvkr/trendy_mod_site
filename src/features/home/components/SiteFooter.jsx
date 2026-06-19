@@ -16,7 +16,7 @@ function SiteFooter() {
     };
 
     return (
-        <footer className="relative bg-gradient-to-b from-slate-900 via-gray-950 to-black text-slate-200 pt-6 md:pt-20 pb-8 border-t border-slate-800/60 overflow-hidden">
+        <footer className="relative bg-linear-to-b from-slate-900 via-gray-950 to-black text-slate-200 pt-6 md:pt-20 pb-8 border-t border-slate-800/60 overflow-hidden">
             {/* Ambient Background Glow */}
             <div className="absolute top-0 left-1/4 w-96 h-96 bg-orange-500/5 rounded-full blur-3xl pointer-events-none" />
             <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-pink-500/5 rounded-full blur-3xl pointer-events-none" />
@@ -29,7 +29,7 @@ function SiteFooter() {
                     <div className="lg:col-span-4 space-y-6">
                         <div className="flex items-center gap-3">
                             <div>
-                                <span className="font-extrabold text-2xl tracking-tight bg-gradient-to-r from-orange-400 via-pink-500 to-purple-500 bg-clip-text text-transparent">
+                                <span className="font-extrabold text-2xl tracking-tight bg-linear-to-r from-orange-400 via-pink-500 to-purple-500 bg-clip-text text-transparent">
                                     Trendy Mod
                                 </span>
                                 <p className="text-[10px] tracking-widest text-slate-500 uppercase font-bold mt-0.5">Est. 2020</p>
@@ -102,7 +102,7 @@ function SiteFooter() {
                                     whileHover={{ scale: 1.05 }}
                                     whileTap={{ scale: 0.95 }}
                                     type="submit"
-                                    className="bg-gradient-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white p-2.5 rounded-lg flex items-center justify-center shrink-0 shadow-lg shadow-orange-500/10 transition-all"
+                                    className="bg-linear-to-r from-orange-500 to-pink-500 hover:from-orange-600 hover:to-pink-600 text-white p-2.5 rounded-lg flex items-center justify-center shrink-0 shadow-lg shadow-orange-500/10 transition-all"
                                     aria-label="Subscribe"
                                 >
                                     <FaArrowRight className="text-sm" />
@@ -114,7 +114,7 @@ function SiteFooter() {
                             <h5 className="text-xs font-semibold uppercase tracking-wider text-slate-400 mb-3">Connect With Us</h5>
                             <div className="flex gap-2.5">
                                 {[
-                                    { icon: FaInstagram, color: 'hover:bg-gradient-to-tr hover:from-yellow-500 hover:to-purple-500 hover:text-white', label: 'Instagram', url: 'https://instagram.com' },
+                                    { icon: FaInstagram, color: 'hover:bg-linear-to-tr hover:from-yellow-500 hover:to-purple-500 hover:text-white', label: 'Instagram', url: 'https://instagram.com' },
                                     { icon: FaFacebook, color: 'hover:bg-blue-600 hover:text-white', label: 'Facebook', url: 'https://facebook.com' },
                                     { icon: FaTiktok, color: 'hover:bg-black hover:text-cyan-400 border-white/10', label: 'TikTok', url: 'https://tiktok.com' },
                                     { icon: FaTwitter, color: 'hover:bg-sky-500 hover:text-white', label: 'Twitter', url: 'https://twitter.com' },

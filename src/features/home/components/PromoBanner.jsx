@@ -76,7 +76,7 @@ const PromoBanner = () => {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         transition={{ duration: 0.5, ease: "easeOut" }}
-                        className={`relative bg-gradient-to-br ${banner.color} p-6 pt-2 md:pt-0 sm:p-8 md:p-12 lg:p-16 xl:p-20 min-h-[280px] sm:min-h-[320px] md:min-h-[400px] lg:min-h-[460px] flex items-center overflow-hidden`}
+                        className={`relative bg-linear-to-br ${banner.color} p-6 pt-2 md:pt-0 sm:p-8 md:p-12 lg:p-16 xl:p-20 min-h-70 sm:min-h-80 md:min-h-100 lg:min-h-115 flex items-center overflow-hidden`}
                     >
                         {/* Background Micro Pattern */}
                         <div className="absolute inset-0 pointer-events-none z-0">
@@ -165,9 +165,9 @@ const PromoBanner = () => {
                                     initial={{ opacity: 0, scale: 0.95 }}
                                     animate={{ opacity: 1, scale: 1 }}
                                     transition={{ delay: 0.3 }}
-                                    className="w-48 h-48 rounded-2xl border border-white/10 bg-white/[0.03] backdrop-blur-md flex items-center justify-center shadow-2xl relative"
+                                    className="w-48 h-48 rounded-2xl border border-white/10 bg-white/3 backdrop-blur-md flex items-center justify-center shadow-2xl relative"
                                 >
-                                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/5 to-transparent pointer-events-none" />
+                                    <div className="absolute inset-0 rounded-2xl bg-linear-to-br from-white/5 to-transparent pointer-events-none" />
                                     {banner.icon}
                                 </motion.div>
                             </div>
@@ -223,13 +223,13 @@ const PromoBanner = () => {
                 </div>
 
                 {/* Progress bar line */}
-                <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-white/10">
+                <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-white/10">
                     <motion.div
                         key={currentBanner}
                         initial={{ width: "0%" }}
                         animate={{ width: "100%" }}
                         transition={{ duration: 6, ease: "linear" }}
-                        className="h-full bg-gradient-to-r from-transparent via-white/50 to-transparent"
+                        className="h-full bg-linear-to-r from-transparent via-white/50 to-transparent"
                     />
                 </div>
             </div>

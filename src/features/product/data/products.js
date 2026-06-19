@@ -1,5 +1,5 @@
 export const products = [
-    // Panda Collection Products - Using available images
+    // Panda Collection Products 
     {
         id: 101,
         name: "Panda Plush - Small",
@@ -225,7 +225,7 @@ export const products = [
         description: "Panda printed cotton t-shirt"
     },
 
-    // Color Changing Panda Products - Using panda images
+    // Color Changing Panda Products 
     {
         id: 201,
         name: "Color Changing Panda",
@@ -275,7 +275,7 @@ export const products = [
         description: "Panda that changes color based on mood"
     },
 
-    // Shinchan Mobile Stand Products - Using panda images (as placeholder)
+    // Shinchan Mobile Stand Products
     {
         id: 301,
         name: "Shinchan Mobile Stand",
@@ -325,7 +325,7 @@ export const products = [
         description: "Shinchan keychain for keys and bags"
     },
 
-    // Other Products - Using panda images (as placeholder)
+    // Other Products - Using panda images
     {
         id: 1,
         name: "Teddy Bear",

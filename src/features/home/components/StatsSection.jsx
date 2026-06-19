@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { Gift, Award, Clock, Zap } from 'lucide-react';
 
 function StatsSection() {
+
     const stats = [
         {
             icon: Gift,
@@ -85,10 +86,10 @@ function StatsSection() {
                                 className="group relative bg-white dark:bg-slate-900 rounded-2xl border border-slate-100 dark:border-slate-800/80 p-6 sm:p-8 text-center shadow-[0_4px_20px_rgba(0,0,0,0.01)] dark:shadow-none hover:shadow-[0_24px_48px_rgba(0,0,0,0.06)] dark:hover:shadow-[0_24px_48px_rgba(0,0,0,0.3)] hover:-translate-y-1.5 transition-all duration-300 ease-out overflow-hidden"
                             >
                                 {/* Premium Radial Glow */}
-                                <div className={`absolute inset-0 bg-radial-gradient bg-gradient-to-b ${stat.glowBg} to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none`} />
+                                <div className={`absolute inset-0 bg-radial-gradient bg-linear-to-b ${stat.glowBg} to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none`} />
 
                                 {/* Top Accent Line */}
-                                <div className={`absolute top-0 left-0 right-0 h-[4px] ${stat.accentBg} opacity-85 group-hover:opacity-100 transition-all duration-300`} />
+                                <div className={`absolute top-0 left-0 right-0 h-1 ${stat.accentBg} opacity-85 group-hover:opacity-100 transition-all duration-300`} />
 
                                 {/* Icon Container with Smooth Ring Expansion */}
                                 <div className={`

@@ -33,7 +33,7 @@ const AnnouncementBar = () => {
                     animate={{ height: 'auto', opacity: 1 }}
                     exit={{ height: 0, opacity: 0 }}
                     transition={{ duration: 0.3, ease: "easeInOut" }}
-                    className="relative overflow-hidden bg-gradient-to-r from-blue-700 via-blue-600 to-blue-700 text-white text-xs sm:text-sm font-bold py-2.5 border-b border-blue-800 tracking-wide shadow-md"
+                    className="relative overflow-hidden bg-linear-to-r from-blue-700 via-blue-600 to-blue-700 text-white text-xs sm:text-sm font-bold py-2.5 border-b border-blue-800 tracking-wide shadow-md"
                 >
                     {/* Container aligned to the left with right padding for the close button */}
                     <div className="w-full pl-6 pr-12 relative flex items-center justify-start">

@@ -34,7 +34,6 @@ function HomePage() {
     });
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [isWishlistOpen, setIsWishlistOpen] = useState(false);
-    const [searchQuery, setSearchQuery] = useState('');
     const [showAddToCartFeedback, setShowAddToCartFeedback] = useState(false);
 
     useEffect(() => {
@@ -55,13 +54,6 @@ function HomePage() {
 
     const handleCategorySelect = (categoryId) => {
         navigate(`/products/${categoryId}`);
-    };
-
-    const handleSearch = (query) => {
-        setSearchQuery(query);
-        if (query.length > 0) {
-            navigate(`/products?search=${encodeURIComponent(query)}`);
-        }
     };
 
     const handleAddToCart = useCallback((product) => {
@@ -113,7 +105,6 @@ function HomePage() {
             <AnnouncementBar />
             <HomeHeader
                 onCategorySelect={handleCategorySelect}
-                onSearch={handleSearch}
                 cartCount={cart.reduce((sum, item) => sum + item.quantity, 0)}
                 wishlistCount={wishlist.length}
                 onCartOpen={() => setIsCartOpen(true)}
