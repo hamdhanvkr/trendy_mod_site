@@ -316,7 +316,7 @@ const FeaturedSection = ({ onAddToCart, onWishlistToggle, wishlist = [] }) => {
             setAddedToCart(prev => ({ ...prev, [product.id]: true }));
             const timer = setTimeout(() => {
                 setAddedToCart(prev => ({ ...prev, [product.id]: false }));
-            }, 10000);
+            }, 2000);
             return () => clearTimeout(timer);
         } else {
             console.log('Add to cart:', product.id);

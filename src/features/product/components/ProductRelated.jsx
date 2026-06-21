@@ -18,7 +18,7 @@ export const ProductRelated = React.memo(({
     if (!products || products.length === 0) return null;
 
     return (
-        <div className="mt-2 pt-8 border-t border-slate-200">
+        <div className="mt-10 pt-8 border-t border-slate-200">
             <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-bold text-slate-900">
                     You May Also Like

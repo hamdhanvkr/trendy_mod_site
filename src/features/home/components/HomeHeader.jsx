@@ -1,8 +1,8 @@
-import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import TrendyLogo from '/TrendyLogo.png';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ShoppingBag, Grid, Sparkles, Palette, Monitor, Layers, Heart, Home, Search, ChevronDown, X, MessageCircle } from 'lucide-react';
+import { ShoppingBag, Grid, Sparkles, Palette, Monitor, Layers, Heart, Home, Search, ChevronDown, X, MessageCircle, Package } from 'lucide-react';
 
 const CATEGORIES = [
     {
@@ -81,7 +81,6 @@ const HomeHeader = ({
     const [isScrolled, setIsScrolled] = useState(false);
     const [showCategoriesDropdown, setShowCategoriesDropdown] = useState(false);
     const [showMobileDrawer, setShowMobileDrawer] = useState(false);
-    const drawerHistoryPushed = useRef(false);
 
     const activeTab = useMemo(() => {
         const path = location.pathname;
@@ -92,6 +91,7 @@ const HomeHeader = ({
         return 'home';
     }, [location.pathname]);
 
+    // Handle scroll effect
     useEffect(() => {
         const handleScroll = () => {
             setIsScrolled(window.scrollY > 15);
@@ -100,7 +100,19 @@ const HomeHeader = ({
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
-    // Consolidated drawer history management
+    // Prevent body scroll when cart or wishlist is open
+    useEffect(() => {
+        if (isCartOpen || isWishlistOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = '';
+        }
+        return () => {
+            document.body.style.overflow = '';
+        };
+    }, [isCartOpen, isWishlistOpen]);
+
+    // Handle Escape key for closing drawers
     useEffect(() => {
         const handleKeyDown = (e) => {
             if (e.key === 'Escape') {
@@ -108,43 +120,10 @@ const HomeHeader = ({
                 setShowMobileDrawer(false);
                 if (isCartOpen && onCartClose) onCartClose();
                 if (isWishlistOpen && onWishlistClose) onWishlistClose();
-                if (drawerHistoryPushed.current) {
-                    window.history.back();
-                    drawerHistoryPushed.current = false;
-                }
             }
         };
         window.addEventListener('keydown', handleKeyDown);
         return () => window.removeEventListener('keydown', handleKeyDown);
-    }, [isCartOpen, isWishlistOpen, onCartClose, onWishlistClose]);
-
-    useEffect(() => {
-        const handlePopState = () => {
-            if (isCartOpen || isWishlistOpen) {
-                if (isCartOpen && onCartClose) {
-                    onCartClose();
-                }
-                if (isWishlistOpen && onWishlistClose) {
-                    onWishlistClose();
-                }
-                drawerHistoryPushed.current = false;
-                return true;
-            }
-            return false;
-        };
-
-        if ((isCartOpen || isWishlistOpen) && !drawerHistoryPushed.current) {
-            drawerHistoryPushed.current = true;
-            window.history.pushState({ drawerOpen: true }, '', window.location.href);
-        } else if (!isCartOpen && !isWishlistOpen) {
-            drawerHistoryPushed.current = false;
-        }
-
-        window.addEventListener('popstate', handlePopState);
-
-        return () => {
-            window.removeEventListener('popstate', handlePopState);
-        };
     }, [isCartOpen, isWishlistOpen, onCartClose, onWishlistClose]);
 
     // Memoized handlers
@@ -156,6 +135,10 @@ const HomeHeader = ({
 
     const handleWhatsAppClick = useCallback(() => {
         window.open('https://wa.me/919629601141', '_blank');
+    }, []);
+
+    const handleTrackOrder = useCallback(() => {
+        window.open('https://stcourier.com/track/shipment', '_blank', 'noopener,noreferrer');
     }, []);
 
     const handleWishlistOpen = useCallback(() => {
@@ -173,7 +156,7 @@ const HomeHeader = ({
     const tabbarItems = [
         { id: 'home', label: 'Home', icon: <Home size={18} />, path: '/' },
         { id: 'categories', label: 'Categories', icon: <Grid size={18} /> },
-        { id: 'wishlist', label: 'Wishlist', icon: <Heart size={18} />, badge: wishlistCount, action: handleWishlistOpen },
+        { id: 'track', label: 'Track', icon: <Package size={18} />, action: handleTrackOrder },
         { id: 'cart', label: 'Cart', icon: <ShoppingBag size={18} />, badge: cartCount, action: handleCartOpen },
     ];
 
@@ -187,7 +170,7 @@ const HomeHeader = ({
         <>
             <header
                 className={`sticky top-0 z-50 transition-all duration-300 ease-in-out ${isScrolled
-                    ? 'bg-white backdrop-blur-xl border-b border-blue-100/50 shadow-[0_8px_30px_rgb(37,99,235,0.03)] py-1'
+                    ? 'bg-white/95 backdrop-blur-xl border-b border-blue-100/50 shadow-[0_8px_30px_rgb(37,99,235,0.03)] py-1'
                     : 'bg-white border-b border-transparent'
                     }`}
                 role="banner"
@@ -215,6 +198,7 @@ const HomeHeader = ({
 
                         {/* RIGHT CONTROLS */}
                         <div className="flex items-center gap-2 sm:gap-4">
+                            {/* Desktop Navigation */}
                             <nav className="hidden lg:flex items-center gap-0.5" aria-label="Main navigation">
                                 <button
                                     onClick={() => window.location.href = '/'}
@@ -242,8 +226,11 @@ const HomeHeader = ({
                                             }`}
                                     >
                                         Categories
-                                        <ChevronDown size={12} className={`transition-transform duration-300 ${showCategoriesDropdown ? 'rotate-180 text-blue-500' : 'text-slate-400'
-                                            }`} />
+                                        <ChevronDown
+                                            size={12}
+                                            className={`transition-transform duration-300 ${showCategoriesDropdown ? 'rotate-180 text-blue-500' : 'text-slate-400'
+                                                }`}
+                                        />
                                     </button>
 
                                     <AnimatePresence>
@@ -266,7 +253,7 @@ const HomeHeader = ({
                                 </div>
 
                                 <button
-                                    onClick={() => window.open('https://stcourier.com/track/shipment', '_blank', 'noopener,noreferrer')}
+                                    onClick={handleTrackOrder}
                                     className="px-3 py-2 rounded-lg text-sm font-bold text-slate-600 hover:text-blue-600 hover:bg-blue-50/50 transition-all"
                                 >
                                     Track
@@ -312,7 +299,7 @@ const HomeHeader = ({
                                 )}
                             </button>
 
-                            {/* CART CONTAINER */}
+                            {/* Cart Button */}
                             <button
                                 onClick={handleCartOpen}
                                 className="relative bg-blue-600 hover:bg-blue-700 text-white p-2.5 sm:px-4 sm:py-2.5 rounded-xl flex items-center justify-center gap-2 transition-all font-bold text-xs shadow-md shadow-blue-600/10 active:scale-[0.97]"
@@ -387,7 +374,10 @@ const HomeHeader = ({
             </AnimatePresence>
 
             {/* Mobile Bottom Tab Navigation */}
-            <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white backdrop-blur-xl border-t border-blue-50/80 shadow-[0_-10px_30px_rgba(37,99,235,0.03)]" aria-label="Mobile navigation">
+            <nav
+                className="lg:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-xl border-t border-blue-50/80 shadow-[0_-10px_30px_rgba(37,99,235,0.03)]"
+                aria-label="Mobile navigation"
+            >
                 <div className="flex items-center justify-around py-2 px-2">
                     {tabbarItems.map((item) => {
                         const isActive = activeTab === item.id;

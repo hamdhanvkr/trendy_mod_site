@@ -7,7 +7,6 @@ import {
     Search,
     X,
     ChevronDown,
-    Filter,
     Grid,
     List,
     Check
@@ -24,8 +23,6 @@ import { trackEvent } from '@/utils/analytics';
 import {
     ProductCard,
     ProductSkeleton,
-    FilterPanel,
-    MobileFilterSection,
     ErrorFallback
 } from '../components';
 import { productReducer, initialState } from '../reducers';
@@ -34,7 +31,6 @@ import {
     VIEW_MODES,
     SORT_OPTIONS,
     ITEMS_PER_PAGE,
-    MAX_PRICE,
     CATEGORY_NAMES
 } from '../constants';
 
@@ -45,12 +41,18 @@ const ProductsPage = () => {
     const location = useLocation();
 
     // State
-    const [state, dispatch] = useReducer(productReducer, initialState);
-    const [, setWishlist] = useLocalStorage('wishlist', []);
-    const [, setCart] = useLocalStorage('cart', []);
+    const [storedWishlist, setWishlist] = useLocalStorage('wishlist', []);
+    const [storedCart, setCart] = useLocalStorage('cart', []);
+    const [state, dispatch] = useReducer(productReducer, {
+        ...initialState,
+        wishlist: storedWishlist,
+        cart: storedCart
+    });
 
     // Refs
     const isInitialMount = useRef(true);
+    const prevWishlistOpenRef = useRef(state.isWishlistOpen);
+    const prevCartOpenRef = useRef(state.isCartOpen);
 
     // Sync localStorage with state
     useEffect(() => {
@@ -60,15 +62,48 @@ const ProductsPage = () => {
         }
     }, [state.wishlist, state.cart, state.isInitialized, setWishlist, setCart]);
 
+    useEffect(() => {
+        const handlePopState = () => {
+            if (state.isWishlistOpen) {
+                dispatch({ type: 'TOGGLE_WISHLIST_DRAWER', payload: false });
+                return;
+            }
+            if (state.isCartOpen) {
+                dispatch({ type: 'TOGGLE_CART_DRAWER', payload: false });
+                return;
+            }
+        };
+
+        window.addEventListener('popstate', handlePopState);
+        return () => window.removeEventListener('popstate', handlePopState);
+    }, [dispatch, state.isWishlistOpen, state.isCartOpen]);
+
+    useEffect(() => {
+        if (state.isWishlistOpen || state.isCartOpen) {
+            window.history.pushState({ drawerOpen: true }, '', window.location.href);
+        }
+    }, [state.isWishlistOpen, state.isCartOpen]);
+
+    useEffect(() => {
+        if (prevWishlistOpenRef.current && !state.isWishlistOpen) {
+            if (window.history.state?.drawerOpen) {
+                window.history.back();
+            }
+        }
+        prevWishlistOpenRef.current = state.isWishlistOpen;
+    }, [state.isWishlistOpen]);
+
+    useEffect(() => {
+        if (prevCartOpenRef.current && !state.isCartOpen) {
+            if (window.history.state?.drawerOpen) {
+                window.history.back();
+            }
+        }
+        prevCartOpenRef.current = state.isCartOpen;
+    }, [state.isCartOpen]);
+
     // Debounced search query
     const debouncedSearch = useDebounce(state.searchQuery, 300);
-
-    // Get available categories
-    const availableCategories = useMemo(() => {
-        const cats = new Set();
-        products.forEach(p => cats.add(p.category));
-        return Array.from(cats);
-    }, []);
 
     // Load products
     useEffect(() => {
@@ -159,26 +194,14 @@ const ProductsPage = () => {
         handleSearch,
         clearSearch,
         handleSortChange,
-        handlePriceChange,
-        toggleCategoryFilter,
         clearFilters,
         toggleWishlist,
         handleAddToCart,
         handleProductClick,
         handleCategorySelect,
         handleViewModeChange,
-        loadMore,
-        toggleMobileFilters
+        loadMore
     } = useProductActions(state, dispatch, navigate, location);
-
-    // Count active filters
-    const activeFilterCount = useMemo(() => {
-        let count = 0;
-        if (state.selectedCategories.length > 0) count++;
-        if (state.searchQuery) count++;
-        if (state.priceRange.min > 0 || state.priceRange.max < MAX_PRICE) count++;
-        return count;
-    }, [state.selectedCategories, state.searchQuery, state.priceRange]);
 
     // Error state
     if (state.error) {
@@ -364,20 +387,6 @@ const ProductsPage = () => {
                             <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 pointer-events-none" />
                         </div>
 
-                        {/* Filter Button */}
-                        <button
-                            onClick={toggleMobileFilters}
-                            className="lg:hidden p-2.5 rounded-xl border border-slate-200 hover:bg-slate-50 transition-colors flex items-center gap-2 relative"
-                            aria-label="Toggle filters"
-                            aria-expanded={state.showMobileFilters}
-                        >
-                            <Filter size={18} className="text-slate-600" />
-                            <span className="text-sm font-medium text-slate-700">Filters</span>
-                            {activeFilterCount > 0 && (
-                                <span className="absolute -top-1 -right-1 w-2 h-2 bg-blue-600 rounded-full" />
-                            )}
-                        </button>
-
                         {/* View Mode Switcher */}
                         <div className="flex gap-1 bg-slate-100 p-1 rounded-xl border border-slate-200/20 shrink-0">
                             <button
@@ -402,38 +411,12 @@ const ProductsPage = () => {
                     </div>
 
                     {/* Mobile Filter Section */}
-                    <MobileFilterSection
-                        showMobileFilters={state.showMobileFilters}
-                        categoryId={categoryId}
-                        availableCategories={availableCategories}
-                        selectedCategories={state.selectedCategories}
-                        priceRange={state.priceRange}
-                        searchQuery={state.searchQuery}
-                        onToggleCategory={toggleCategoryFilter}
-                        onClearFilters={clearFilters}
-                        onToggleMobileFilters={toggleMobileFilters}
-                        onPriceChange={handlePriceChange}
-                        activeFilterCount={activeFilterCount}
-                    />
                 </div>
             </div>
 
             {/* Main Content */}
             <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-4 md:py-8">
                 <div className="flex gap-6">
-                    {/* Filter Panel - Desktop */}
-                    <div className="hidden lg:block">
-                        <FilterPanel
-                            selectedCategories={state.selectedCategories}
-                            onToggleCategory={toggleCategoryFilter}
-                            priceRange={state.priceRange}
-                            onPriceChange={handlePriceChange}
-                            availableCategories={availableCategories}
-                            onClearFilters={clearFilters}
-                            categoryId={categoryId}
-                        />
-                    </div>
-
                     {/* Product Grid */}
                     <div className="flex-1 min-w-0">
                         <AnimatePresence mode="wait">

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useReducer, useCallback, useMemo } from 'react';
+import React, { useEffect, useReducer, useCallback, useMemo, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
@@ -21,30 +21,9 @@ import {
     ProductBenefits
 } from '../components';
 import { useProductDetail } from '../hooks';
+import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { productDetailReducer, productDetailInitialState } from '../reducers';
 import { MIN_QUANTITY, MAX_QUANTITY } from '../constants';
-
-const useLocalStorage = (key, initialValue) => {
-
-    const [storedValue, setStoredValue] = useState(() => {
-        try {
-            const item = localStorage.getItem(key);
-            return item ? JSON.parse(item) : initialValue;
-        } catch {
-            return initialValue;
-        }
-    });
-
-    useEffect(() => {
-        try {
-            localStorage.setItem(key, JSON.stringify(storedValue));
-        } catch (error) {
-            console.error(`Error saving to localStorage (${key}):`, error);
-        }
-    }, [key, storedValue]);
-
-    return [storedValue, setStoredValue];
-};
 
 const ProductPageHeader = ({
     onCategorySelect,
@@ -77,6 +56,49 @@ const ProductDetailPage = () => {
     const [state, dispatch] = useReducer(productDetailReducer, productDetailInitialState);
     const [wishlist, setWishlist] = useLocalStorage('wishlist', []);
     const [cart, setCart] = useLocalStorage('cart', []);
+    const prevWishlistOpenRef = useRef(state.isWishlistOpen);
+    const prevCartOpenRef = useRef(state.isCartOpen);
+
+    // Back button handling for open drawers
+    useEffect(() => {
+        const handlePopState = () => {
+            if (state.isWishlistOpen) {
+                dispatch({ type: 'TOGGLE_WISHLIST_DRAWER', payload: false });
+                return;
+            }
+            if (state.isCartOpen) {
+                dispatch({ type: 'TOGGLE_CART_DRAWER', payload: false });
+                return;
+            }
+        };
+
+        window.addEventListener('popstate', handlePopState);
+        return () => window.removeEventListener('popstate', handlePopState);
+    }, [dispatch, state.isWishlistOpen, state.isCartOpen]);
+
+    useEffect(() => {
+        if (state.isWishlistOpen || state.isCartOpen) {
+            window.history.pushState({ drawerOpen: true }, '', window.location.href);
+        }
+    }, [state.isWishlistOpen, state.isCartOpen]);
+
+    useEffect(() => {
+        if (prevWishlistOpenRef.current && !state.isWishlistOpen) {
+            if (window.history.state?.drawerOpen) {
+                window.history.back();
+            }
+        }
+        prevWishlistOpenRef.current = state.isWishlistOpen;
+    }, [state.isWishlistOpen]);
+
+    useEffect(() => {
+        if (prevCartOpenRef.current && !state.isCartOpen) {
+            if (window.history.state?.drawerOpen) {
+                window.history.back();
+            }
+        }
+        prevCartOpenRef.current = state.isCartOpen;
+    }, [state.isCartOpen]);
 
     // Custom hook for product data
     const {

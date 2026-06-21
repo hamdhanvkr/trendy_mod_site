@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Check } from 'lucide-react';
 import {
     AnnouncementBar,
@@ -35,7 +35,11 @@ function HomePage() {
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [isWishlistOpen, setIsWishlistOpen] = useState(false);
     const [showAddToCartFeedback, setShowAddToCartFeedback] = useState(false);
+    const feedbackTimeoutRef = useRef(null);
+    const historyStackRef = useRef([]);
+    const isProcessingBackRef = useRef(false);
 
+    // Save cart to localStorage
     useEffect(() => {
         try {
             localStorage.setItem('cart', JSON.stringify(cart));
@@ -44,6 +48,7 @@ function HomePage() {
         }
     }, [cart]);
 
+    // Save wishlist to localStorage
     useEffect(() => {
         try {
             localStorage.setItem('wishlist', JSON.stringify(wishlist));
@@ -51,6 +56,52 @@ function HomePage() {
             console.error('Error saving wishlist:', error);
         }
     }, [wishlist]);
+
+    // Handle back button for mobile
+    useEffect(() => {
+        const handlePopState = () => {
+            if (isProcessingBackRef.current) return;
+            if (historyStackRef.current.length > 0) {
+
+                isProcessingBackRef.current = true;
+                const lastDrawer = historyStackRef.current[historyStackRef.current.length - 1];
+
+                if (lastDrawer === 'wishlist' && isWishlistOpen) {
+                    setIsWishlistOpen(false);
+                    historyStackRef.current.pop();
+                    window.history.pushState({ drawerOpen: true }, '', window.location.href);
+                    isProcessingBackRef.current = false;
+                    return;
+                }
+
+                if (lastDrawer === 'cart' && isCartOpen) {
+                    setIsCartOpen(false);
+                    historyStackRef.current.pop();
+                    window.history.pushState({ drawerOpen: true }, '', window.location.href);
+                    isProcessingBackRef.current = false;
+                    return;
+                }
+
+                // If we get here, clear the history
+                historyStackRef.current = [];
+                isProcessingBackRef.current = false;
+            }
+        };
+
+        window.addEventListener('popstate', handlePopState);
+
+        return () => {
+            window.removeEventListener('popstate', handlePopState);
+        };
+    }, [isWishlistOpen, isCartOpen]);
+
+    // Initialize history
+    useEffect(() => {
+        window.history.pushState({ initial: true }, '', window.location.href);
+        return () => {
+            historyStackRef.current = [];
+        };
+    }, []);
 
     const handleCategorySelect = (categoryId) => {
         navigate(`/products/${categoryId}`);
@@ -72,9 +123,16 @@ function HomePage() {
             return newCart;
         });
 
+        // Clear any existing timeout
+        if (feedbackTimeoutRef.current) {
+            clearTimeout(feedbackTimeoutRef.current);
+        }
+
         // Show feedback
         setShowAddToCartFeedback(true);
-        setTimeout(() => setShowAddToCartFeedback(false), 3000);
+        feedbackTimeoutRef.current = setTimeout(() => {
+            setShowAddToCartFeedback(false);
+        }, 3000);
     }, []);
 
     const handleWishlistToggle = useCallback((productId) => {
@@ -94,43 +152,80 @@ function HomePage() {
         navigate('/products');
     }, [navigate]);
 
+    const handleWishlistOpen = useCallback(() => {
+        setIsWishlistOpen(true);
+        historyStackRef.current.push('wishlist');
+        window.history.pushState({ drawerOpen: true, type: 'wishlist' }, '', window.location.href);
+    }, []);
+
+    const handleWishlistClose = useCallback(() => {
+        setIsWishlistOpen(false);
+        const index = historyStackRef.current.lastIndexOf('wishlist');
+        if (index !== -1) {
+            historyStackRef.current.splice(index, 1);
+        }
+    }, []);
+
+    const handleCartOpen = useCallback(() => {
+        setIsCartOpen(true);
+        historyStackRef.current.push('cart');
+        window.history.pushState({ drawerOpen: true, type: 'cart' }, '', window.location.href);
+    }, []);
+
+    const handleCartClose = useCallback(() => {
+        setIsCartOpen(false);
+        const index = historyStackRef.current.lastIndexOf('cart');
+        if (index !== -1) {
+            historyStackRef.current.splice(index, 1);
+        }
+    }, []);
+
+    const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+
     return (
         <>
+            {/* Add to Cart Feedback */}
             {showAddToCartFeedback && (
-                <div className="fixed bottom-20 left-1/2 -translate-x-1/2 z-50 bg-emerald-500 text-white px-6 py-3 rounded-xl shadow-lg font-bold text-sm flex items-center gap-2 animate-in slide-in-from-bottom-4 duration-300">
-                    <Check size={18} />
-                    Added to Cart!
+                <div className="fixed bottom-27 left-1/2 -translate-x-1/2 z-100 bg-emerald-500 text-white px-6 py-3 rounded-xl shadow-lg font-bold text-sm flex items-center gap-2 animate-in slide-in-from-bottom-4 duration-300">
+                    <Check size={18} className="shrink-0" />
+                    <span>Added to Cart!</span>
                 </div>
             )}
+
             <AnnouncementBar />
+
             <HomeHeader
                 onCategorySelect={handleCategorySelect}
-                cartCount={cart.reduce((sum, item) => sum + item.quantity, 0)}
+                cartCount={cartCount}
                 wishlistCount={wishlist.length}
-                onCartOpen={() => setIsCartOpen(true)}
-                onWishlistOpen={() => setIsWishlistOpen(true)}
+                onCartOpen={handleCartOpen}
+                onWishlistOpen={handleWishlistOpen}
                 isCartOpen={isCartOpen}
                 isWishlistOpen={isWishlistOpen}
-                onCartClose={() => setIsCartOpen(false)}
-                onWishlistClose={() => setIsWishlistOpen(false)}
+                onCartClose={handleCartClose}
+                onWishlistClose={handleWishlistClose}
             />
+
             <HeroSection
-                onShopNow={() => setIsCartOpen(true)}
+                onShopNow={handleCartOpen}
                 onViewCollection={handleViewAllProducts}
             />
+
             <PromoBanner />
+
             <FeaturedSection
                 onAddToCart={handleAddToCart}
                 onWishlistToggle={handleWishlistToggle}
                 wishlist={wishlist}
             />
+
             <StatsSection />
             <SiteFooter />
 
             {/* Cart Drawer */}
             <CartDrawer
                 isOpen={isCartOpen}
-                onClose={() => setIsCartOpen(false)}
+                onClose={handleCartClose}
                 cart={cart}
                 setCart={setCart}
             />
@@ -138,7 +233,7 @@ function HomePage() {
             {/* Wishlist Drawer */}
             <WishlistDrawer
                 isOpen={isWishlistOpen}
-                onClose={() => setIsWishlistOpen(false)}
+                onClose={handleWishlistClose}
                 wishlist={wishlist}
                 onWishlistToggle={handleWishlistToggle}
                 onAddToCart={handleAddToCart}

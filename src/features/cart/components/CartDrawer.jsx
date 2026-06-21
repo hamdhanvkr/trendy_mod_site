@@ -1,5 +1,4 @@
-// src/features/cart/components/CartDrawer.jsx
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Minus, Plus, Trash2, ArrowRight, ShoppingBag, Truck, ShieldCheck, Box } from 'lucide-react';
 import OrderForm from '@/features/order/components/OrderForm';
@@ -53,7 +52,7 @@ const CartDrawer = ({ isOpen, onClose, cart, setCart }) => {
         }
 
         return (
-            <div className="w-full h-full bg-gradient-to-br from-blue-50 to-indigo-50/50 flex items-center justify-center rounded-xl border border-blue-100/50">
+            <div className="w-full h-full bg-linear-to-br from-blue-50 to-indigo-50/50 flex items-center justify-center rounded-xl border border-blue-100/50">
                 <Box size={20} className="text-blue-500/80" />
             </div>
         );
@@ -73,21 +72,21 @@ const CartDrawer = ({ isOpen, onClose, cart, setCart }) => {
                             className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 transition-opacity"
                         />
 
-                        {/* Responsive Drawer Container */}
+                        {/* Responsive Drawer Container - Fully scrollable */}
                         <motion.div
                             initial={{ x: '100%' }}
                             animate={{ x: 0 }}
                             exit={{ x: '100%' }}
                             transition={{ type: 'tween', duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
-                            className="fixed right-0 top-0 h-full w-full sm:max-w-md bg-white shadow-2xl z-50 flex flex-col border-l border-slate-100"
+                            className="fixed right-0 top-0 h-full w-full sm:max-w-md bg-white shadow-2xl z-50 overflow-y-auto border-l border-slate-100"
                         >
-                            {/* Drawer Header - Optimized Padding */}
-                            <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+                            {/* Header - Part of scroll flow */}
+                            <div className="p-4 sm:p-5 border-b border-slate-100 bg-white flex items-center justify-between">
                                 <div className="min-w-0 pr-2">
                                     <div className="flex items-center gap-2">
-                                        <ShoppingBag size={18} className="text-blue-600 flex-shrink-0" />
+                                        <ShoppingBag size={18} className="text-blue-600 shrink-0" />
                                         <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight truncate">Shopping Cart</h2>
-                                        <span className="text-xs font-semibold px-2 py-0.5 bg-blue-50 text-blue-700 border border-blue-100 rounded-full flex-shrink-0">
+                                        <span className="text-xs font-semibold px-2 py-0.5 bg-blue-50 text-blue-700 border border-blue-100 rounded-full">
                                             {totalItems}
                                         </span>
                                     </div>
@@ -99,7 +98,7 @@ const CartDrawer = ({ isOpen, onClose, cart, setCart }) => {
                                         </p>
                                     )}
                                 </div>
-                                <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+                                <div className="flex items-center gap-1 sm:gap-2 shrink-0">
                                     {cart.length > 0 && (
                                         <button
                                             onClick={clearCart}
@@ -118,15 +117,15 @@ const CartDrawer = ({ isOpen, onClose, cart, setCart }) => {
                                 </div>
                             </div>
 
-                            {/* Main Scroll Content Area */}
-                            <div className="flex-1 overflow-y-auto p-4 sm:p-5 space-y-4">
+                            {/* Main Content - No fixed height, flows naturally */}
+                            <div className="p-4 sm:p-5 space-y-4">
                                 {cart.length === 0 ? (
-                                    <div className="h-full flex flex-col items-center justify-center text-center px-4">
+                                    <div className="flex flex-col items-center justify-center text-center px-4 py-12">
                                         <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-blue-50/50 flex items-center justify-center border border-blue-100/40 mb-4">
                                             <ShoppingBag size={22} className="text-blue-500" />
                                         </div>
                                         <h3 className="text-sm sm:text-base font-bold text-slate-900 tracking-tight">Your cart is empty</h3>
-                                        <p className="text-xs text-slate-400 max-w-[240px] mt-1 mb-5">
+                                        <p className="text-xs text-slate-400 max-w-60 mt-1 mb-5">
                                             Explore our product lines to add curated items to your selection.
                                         </p>
                                         <button
@@ -150,12 +149,12 @@ const CartDrawer = ({ isOpen, onClose, cart, setCart }) => {
                                                     className="group relative bg-white border border-slate-100 rounded-xl p-3 flex flex-wrap sm:flex-nowrap items-center gap-3 transition-all duration-200 hover:border-blue-100 hover:shadow-[0_4px_16px_rgba(37,99,235,0.03)]"
                                                 >
                                                     {/* Media Window Container */}
-                                                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex-shrink-0 relative overflow-hidden bg-slate-50 border border-slate-100 group-hover:border-blue-100 transition-colors duration-200">
+                                                    <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl shrink-0 relative overflow-hidden bg-slate-50 border border-slate-100 group-hover:border-blue-100 transition-colors duration-200">
                                                         {renderProductImage(item)}
                                                     </div>
 
                                                     {/* Typography Content Block */}
-                                                    <div className="flex-1 min-w-[120px] sm:min-w-0">
+                                                    <div className="flex-1 min-w-30 sm:min-w-0">
                                                         <h4 className="font-bold text-slate-800 text-xs sm:text-sm truncate leading-snug group-hover:text-blue-900 transition-colors">
                                                             {item.name}
                                                         </h4>
@@ -194,7 +193,7 @@ const CartDrawer = ({ isOpen, onClose, cart, setCart }) => {
                                                         </div>
 
                                                         {/* Structural Pricing & Clean Elimination */}
-                                                        <div className="text-right min-w-[64px]">
+                                                        <div className="text-right min-w-16">
                                                             <p className="font-black text-slate-900 text-xs sm:text-sm">
                                                                 ₹{item.price * item.quantity}
                                                             </p>
@@ -212,7 +211,7 @@ const CartDrawer = ({ isOpen, onClose, cart, setCart }) => {
 
                                         {/* Logistics Banner */}
                                         <div className="bg-blue-50/40 border border-blue-100/60 rounded-xl p-3 sm:p-3.5 flex items-start gap-2.5">
-                                            <Truck size={15} className="text-blue-600 mt-0.5 flex-shrink-0" />
+                                            <Truck size={15} className="text-blue-600 mt-0.5 shrink-0" />
                                             <div className="text-[11px] sm:text-xs">
                                                 <div className="flex flex-wrap items-center gap-1 sm:gap-1.5 font-bold text-slate-800">
                                                     <span>Delivery Fulfillment</span>
@@ -229,47 +228,45 @@ const CartDrawer = ({ isOpen, onClose, cart, setCart }) => {
                                                 )}
                                             </div>
                                         </div>
+
+                                        {/* Footer - Part of scroll flow, not fixed */}
+                                        <div className="border-t border-slate-100 pt-4 sm:pt-5 mt-2">
+                                            <div className="space-y-2 mb-4">
+                                                <div className="flex justify-between text-xs font-semibold text-slate-500">
+                                                    <span>Subtotal ({totalItems} items)</span>
+                                                    <span className="text-slate-900">₹{subtotal}</span>
+                                                </div>
+                                                <div className="flex justify-between text-xs font-semibold text-slate-500">
+                                                    <span>Fulfillment fee</span>
+                                                    <span className={isFreeDelivery ? "text-blue-600 font-bold" : "text-slate-900"}>
+                                                        {isFreeDelivery ? "₹0" : `₹${deliveryCharge}`}
+                                                    </span>
+                                                </div>
+                                                <div className="border-t border-slate-200/60 pt-2.5 mt-1">
+                                                    <div className="flex justify-between items-baseline">
+                                                        <span className="text-xs sm:text-sm font-bold text-slate-900">Total Bill</span>
+                                                        <span className="text-lg sm:text-xl font-black text-blue-600">₹{total}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* Action Submissions Buttons */}
+                                            <button
+                                                onClick={handleProceed}
+                                                className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 sm:py-3.5 px-4 rounded-xl font-bold text-xs sm:text-sm tracking-wide shadow-md shadow-blue-600/10 hover:shadow-lg transition-all flex items-center justify-center gap-2 group/btn"
+                                            >
+                                                Proceed to Order
+                                                <ArrowRight size={15} className="transform group-hover/btn:translate-x-0.5 transition-transform" />
+                                            </button>
+
+                                            <div className="flex items-center justify-center gap-1.5 text-[10px] sm:text-[11px] text-slate-400 font-medium text-center mt-3">
+                                                <ShieldCheck size={12} className="text-blue-600 shrink-0" />
+                                                <span className="truncate">Secure checkout • Finalize order via WhatsApp</span>
+                                            </div>
+                                        </div>
                                     </>
                                 )}
                             </div>
-
-                            {/* Sticky Summary Actions Footer Container */}
-                            {cart.length > 0 && (
-                                <div className="border-t border-slate-100 p-4 sm:p-5 bg-slate-50/50">
-                                    <div className="space-y-2 mb-4">
-                                        <div className="flex justify-between text-xs font-semibold text-slate-500">
-                                            <span>Subtotal ({totalItems} items)</span>
-                                            <span className="text-slate-900">₹{subtotal}</span>
-                                        </div>
-                                        <div className="flex justify-between text-xs font-semibold text-slate-500">
-                                            <span>Fulfillment fee</span>
-                                            <span className={isFreeDelivery ? "text-blue-600 font-bold" : "text-slate-900"}>
-                                                {isFreeDelivery ? "₹0" : `₹${deliveryCharge}`}
-                                            </span>
-                                        </div>
-                                        <div className="border-t border-slate-200/60 pt-2.5 mt-1">
-                                            <div className="flex justify-between items-baseline">
-                                                <span className="text-xs sm:text-sm font-bold text-slate-900">Total Bill</span>
-                                                <span className="text-lg sm:text-xl font-black text-blue-600">₹{total}</span>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Action Submissions Buttons */}
-                                    <button
-                                        onClick={handleProceed}
-                                        className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 sm:py-3.5 px-4 rounded-xl font-bold text-xs sm:text-sm tracking-wide shadow-md shadow-blue-600/10 hover:shadow-lg transition-all flex items-center justify-center gap-2 group/btn"
-                                    >
-                                        Proceed to Order
-                                        <ArrowRight size={15} className="transform group-hover/btn:translate-x-0.5 transition-transform" />
-                                    </button>
-
-                                    <div className="flex items-center justify-center gap-1.5 text-[10px] sm:text-[11px] text-slate-400 font-medium text-center mt-3">
-                                        <ShieldCheck size={12} className="text-blue-600 flex-shrink-0" />
-                                        <span className="truncate">Secure checkout • Finalize order via WhatsApp</span>
-                                    </div>
-                                </div>
-                            )}
                         </motion.div>
                     </>
                 )}

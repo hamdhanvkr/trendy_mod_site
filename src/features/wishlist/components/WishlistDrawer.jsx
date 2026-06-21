@@ -1,16 +1,14 @@
-// src/features/wishlist/components/WishlistDrawer.jsx
-import React, { useState, useEffect } from 'react';
+import { useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Heart, ShoppingBag, ArrowRight, Trash2 } from 'lucide-react';
 import { products } from '@/features/product/data/products';
 
 const WishlistDrawer = ({ isOpen, onClose, wishlist, onWishlistToggle, onAddToCart }) => {
 
-    const [wishlistProducts, setWishlistProducts] = useState([]);
-
-    useEffect(() => {
-        const items = wishlist.map(id => products.find(p => p.id === id)).filter(Boolean);
-        setWishlistProducts(items);
+    const wishlistProducts = useMemo(() => {
+        return wishlist
+            .map(id => products.find(p => p.id === id))
+            .filter(Boolean);
     }, [wishlist]);
 
     const handleAddToCart = (product, e) => {
@@ -47,14 +45,17 @@ const WishlistDrawer = ({ isOpen, onClose, wishlist, onWishlistToggle, onAddToCa
                         exit={{ x: '100%' }}
                         transition={{ type: 'tween', duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
                         className="fixed right-0 top-0 h-full w-full sm:max-w-md bg-white shadow-2xl z-50 flex flex-col border-l border-slate-100"
+                        role="dialog"
+                        aria-label="Wishlist drawer"
+                        aria-modal="true"
                     >
                         {/* Drawer Header */}
-                        <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between bg-gradient-to-r from-rose-50 to-pink-50/50">
+                        <div className="p-4 sm:p-5 border-b border-slate-100 flex items-center justify-between bg-linear-to-r from-rose-50 to-pink-50/50">
                             <div className="min-w-0 pr-2">
                                 <div className="flex items-center gap-2">
-                                    <Heart size={18} className="text-rose-500 fill-rose-500 flex-shrink-0" />
+                                    <Heart size={18} className="text-rose-500 fill-rose-500 shrink-0" />
                                     <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight truncate">Wishlist</h2>
-                                    <span className="text-xs font-semibold px-2 py-0.5 bg-rose-50 text-rose-700 border border-rose-100 rounded-full flex-shrink-0">
+                                    <span className="text-xs font-semibold px-2 py-0.5 bg-rose-50 text-rose-700 border border-rose-100 rounded-full shrink-0">
                                         {wishlist.length}
                                     </span>
                                 </div>
@@ -64,7 +65,7 @@ const WishlistDrawer = ({ isOpen, onClose, wishlist, onWishlistToggle, onAddToCa
                             </div>
                             <button
                                 onClick={onClose}
-                                className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all flex-shrink-0"
+                                className="p-1.5 text-slate-400 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-all shrink-0"
                                 aria-label="Close panel"
                             >
                                 <X size={18} />
@@ -79,7 +80,7 @@ const WishlistDrawer = ({ isOpen, onClose, wishlist, onWishlistToggle, onAddToCa
                                         <Heart size={22} className="text-rose-400" />
                                     </div>
                                     <h3 className="text-sm sm:text-base font-bold text-slate-900 tracking-tight">Your wishlist is empty</h3>
-                                    <p className="text-xs text-slate-400 max-w-[240px] mt-1 mb-5">
+                                    <p className="text-xs text-slate-400 max-w-60 mt-1 mb-5">
                                         Explore our collection and save your favorite items here.
                                     </p>
                                     <button
@@ -100,7 +101,7 @@ const WishlistDrawer = ({ isOpen, onClose, wishlist, onWishlistToggle, onAddToCa
                                             className="group relative bg-white border border-slate-100 rounded-xl p-3 flex items-center gap-3 transition-all duration-200 hover:border-rose-100 hover:shadow-[0_4px_16px_rgba(244,63,94,0.03)]"
                                         >
                                             {/* Product Image */}
-                                            <div className="w-14 h-14 rounded-xl flex-shrink-0 relative overflow-hidden bg-slate-50 border border-slate-100">
+                                            <div className="w-14 h-14 rounded-xl shrink-0 relative overflow-hidden bg-slate-50 border border-slate-100">
                                                 {product.image ? (
                                                     <img
                                                         src={product.image}
@@ -116,7 +117,7 @@ const WishlistDrawer = ({ isOpen, onClose, wishlist, onWishlistToggle, onAddToCa
                                             </div>
 
                                             {/* Product Info */}
-                                            <div className="flex-1 min-w-[120px]">
+                                            <div className="flex-1 min-w-30">
                                                 <h4 className="font-bold text-slate-800 text-xs sm:text-sm truncate leading-snug">
                                                     {product.name}
                                                 </h4>
@@ -159,7 +160,6 @@ const WishlistDrawer = ({ isOpen, onClose, wishlist, onWishlistToggle, onAddToCa
                                 <button
                                     onClick={() => {
                                         onClose();
-                                        // Navigate to products page
                                         window.location.href = '/products';
                                     }}
                                     className="w-full bg-rose-600 hover:bg-rose-700 text-white py-3 sm:py-3.5 px-4 rounded-xl font-bold text-xs sm:text-sm tracking-wide shadow-md shadow-rose-600/10 hover:shadow-lg transition-all flex items-center justify-center gap-2 group/btn"
