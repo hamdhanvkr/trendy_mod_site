@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ShoppingBag, Minus, Plus, Wallet, MessageCircle } from 'lucide-react';
+import { ShoppingBag, Minus, Plus, Wallet, MessageCircle, Check } from 'lucide-react';
 import { MAX_QUANTITY, MIN_QUANTITY } from '../constants';
 
 export const ProductActions = React.memo(({
@@ -10,7 +10,8 @@ export const ProductActions = React.memo(({
     onAddToCart,
     onBuyNow,
     onWhatsAppSupport,
-    inStock
+    inStock,
+    isAdded = false
 }) => {
 
     if (!product) return null;
@@ -19,7 +20,7 @@ export const ProductActions = React.memo(({
         <div className="space-y-4">
             {/* Quantity Selector */}
             <div className="flex flex-wrap items-center gap-4 pt-1">
-                <span className="text-sm font-bold text-slate-800 tracking-wide">Quantity:</span>
+                <span className="text-sm font-bold text-slate-800 tracking-wide">Quantity :</span>
                 <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200/40 shadow-inner">
                     <button
                         onClick={() => onQuantityChange('decrease')}
@@ -44,25 +45,36 @@ export const ProductActions = React.memo(({
             </div>
 
             {/* Add to Cart & Buy Now */}
-            <div className="flex flex-col sm:flex-row gap-3 pt-2">
+            <div className="flex flex-col sm:flex-row gap-4 pt-1">
                 <motion.button
-                    whileHover={inStock ? { scale: 1.01, y: -1 } : {}}
-                    whileTap={inStock ? { scale: 0.99 } : {}}
+                    whileHover={inStock ? { scale: 1.02 } : {}}
+                    whileTap={inStock ? { scale: 0.98 } : {}}
                     onClick={onAddToCart}
-                    className={`flex-1 py-3.5 bg-slate-900 hover:bg-slate-800 text-white rounded-xl font-bold transition-all duration-200 flex items-center justify-center gap-2 shadow-md disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed text-sm`}
+                    className={`w-full sm:flex-1 py-2 sm:py-2.5 ${isAdded ? 'bg-orange-600' : 'bg-orange-500 hover:bg-orange-600'
+                        } text-white rounded-md font-bold text-sm transition-all duration-200 flex items-center justify-center gap-2 shadow-md shadow-orange-500/20 hover:shadow-lg hover:shadow-orange-500/30 disabled:bg-slate-200 disabled:text-slate-400 disabled:cursor-not-allowed disabled:shadow-none`}
                     disabled={!inStock}
                 >
-                    <ShoppingBag size={18} />
-                    <span>{inStock ? 'Add to Cart' : 'Out of Stock'}</span>
+                    {isAdded ? (
+                        <>
+                            <Check size={16} className="sm:w-4 sm:h-4" />
+                            <span>Added!</span>
+                        </>
+                    ) : (
+                        <>
+                            <ShoppingBag size={16} className="transition-transform sm:w-4 sm:h-4" />
+                            <span>{inStock ? 'Add to Cart' : 'Out of Stock'}</span>
+                        </>
+                    )}
                 </motion.button>
+
                 <motion.button
-                    whileHover={inStock ? { scale: 1.01, y: -1 } : {}}
-                    whileTap={inStock ? { scale: 0.99 } : {}}
+                    whileHover={inStock ? { scale: 1.02 } : {}}
+                    whileTap={inStock ? { scale: 0.98 } : {}}
                     onClick={onBuyNow}
-                    className="flex-1 py-3.5 bg-linear-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white rounded-xl font-bold transition-all duration-200 flex items-center justify-center gap-2 shadow-lg shadow-emerald-600/20 disabled:opacity-40 disabled:cursor-not-allowed text-sm"
+                    className="w-full sm:flex-1 py-2 sm:py-2.5 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-bold text-sm transition-all duration-200 flex items-center justify-center gap-2 shadow-md shadow-blue-600/20 hover:shadow-lg hover:shadow-blue-600/30 disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none"
                     disabled={!inStock}
                 >
-                    <Wallet size={18} />
+                    <Wallet size={16} className="sm:w-4 sm:h-4" />
                     <span>Buy Now</span>
                 </motion.button>
             </div>

@@ -284,6 +284,7 @@ const ProductsPage = () => {
 
     return (
         <div className="min-h-screen bg-white">
+
             <Helmet>
                 <title>{state.categoryName} - Shop</title>
                 <meta name="description" content={`Browse our ${state.categoryName} products. Find the perfect item for you.`} />
@@ -340,7 +341,7 @@ const ProductsPage = () => {
             />
 
             {/* Utility Control Header Bar */}
-            <div className="bg-white backdrop-blur-md border-b border-slate-200/60 sticky top-0 z-30">
+            <div className="bg-white backdrop-blur-md border-b border-slate-200/60">
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-4">
                     {/* Mobile: Back button + Title */}
                     <div className="flex sm:hidden items-center gap-3 mb-3">

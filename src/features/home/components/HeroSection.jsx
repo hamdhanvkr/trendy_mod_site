@@ -119,7 +119,7 @@ const HeroSection = ({ onShopNow, onViewCollection }) => {
                         </div>
 
                         {/* CTA Buttons */}
-                        <div className="flex flex-col sm:flex-row gap-3.5 pt-2 justify-center lg:justify-start">
+                        <div className="flex flex-col sm:flex-row gap-5 pt-2 justify-center lg:justify-start">
                             <motion.button
                                 whileHover={{ scale: 1.02, y: -2 }}
                                 whileTap={{ scale: 0.98 }}

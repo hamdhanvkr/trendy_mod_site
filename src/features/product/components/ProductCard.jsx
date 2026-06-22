@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ShoppingBag, Heart, Eye, Check, Minus, Plus } from 'lucide-react';
+import { ShoppingBag, Heart, Eye, Check, Minus, Plus, Wallet } from 'lucide-react';
 import { getDiscountedPrice } from '../data/products';
 import { VIEW_MODES } from '../constants';
 import { Stars } from './Stars';
@@ -53,8 +53,8 @@ export const ProductCard = React.memo(({
             {/* Product Image */}
             <div
                 className={`relative bg-linear-to-br from-slate-50 to-slate-100 overflow-hidden shrink-0 ${isListMode
-                    ? 'w-32 sm:w-40 lg:w-48 h-full'
-                    : 'aspect-square'
+                        ? 'w-32 sm:w-40 lg:w-48 h-full'
+                        : 'aspect-square'
                     }`}
             >
                 <ProductImage
@@ -96,8 +96,8 @@ export const ProductCard = React.memo(({
                         <Heart
                             size={14}
                             className={`${isInWishlist
-                                ? 'fill-rose-500 text-rose-500'
-                                : 'text-slate-600'
+                                    ? 'fill-rose-500 text-rose-500'
+                                    : 'text-slate-600'
                                 } transition-colors duration-200 sm:w-4 sm:h-4`}
                         />
                     </motion.button>
@@ -145,83 +145,89 @@ export const ProductCard = React.memo(({
                 </div>
 
                 <div>
-                    <div className="flex items-center gap-1 sm:gap-2 mt-1 sm:mt-1.5 flex-wrap">
-                        <span className="text-sm sm:text-lg font-black text-slate-900">
-                            ₹{discountedPrice}
-                        </span>
-                        {product.discount > 0 && (
-                            <>
-                                <span className="text-[10px] sm:text-sm text-slate-400 line-through">
-                                    ₹{product.price}
-                                </span>
-                                <span className="text-[8px] sm:text-xs font-bold text-emerald-600 bg-emerald-50 px-1 sm:px-1.5 py-0.5 rounded">
-                                    Save ₹{product.price - discountedPrice}
-                                </span>
-                            </>
-                        )}
-                    </div>
+                    {/* Price and Quantity - Inline like featured section */}
+                    <div className="flex items-center justify-between mt-1 sm:mt-1.5">
+                        <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
+                            <span className="text-sm sm:text-lg font-black text-slate-900">
+                                ₹{discountedPrice}
+                            </span>
+                            {product.discount > 0 && (
+                                <>
+                                    <span className="text-[10px] sm:text-sm text-slate-400 line-through">
+                                        ₹{product.price}
+                                    </span>
+                                    <span className="text-[8px] sm:text-xs font-bold text-emerald-600 bg-emerald-50 px-1 sm:px-1.5 py-0.5 rounded">
+                                        Save ₹{product.price - discountedPrice}
+                                    </span>
+                                </>
+                            )}
+                        </div>
 
-                    <div className="mt-3 flex items-center justify-between gap-3">
-                        <div className="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 overflow-hidden">
+                        {/* Compact Quantity Selector - Pill style (inline with price) */}
+                        <div className="flex items-center gap-1 bg-slate-100 rounded-md px-1.5 py-0.5 shrink-0">
                             <button
                                 type="button"
                                 onClick={decreaseQuantity}
-                                className="px-3 py-2 text-slate-600 hover:text-slate-900 transition-colors disabled:opacity-40"
+                                className="flex items-center justify-center w-5 h-5 rounded-full text-slate-500 hover:text-slate-700 hover:bg-white transition-all disabled:opacity-40"
                                 disabled={quantity <= 1}
                                 aria-label="Decrease quantity"
                             >
-                                <Minus size={14} />
+                                <Minus size={10} strokeWidth={3} />
                             </button>
-                            <span className="w-10 text-center font-bold text-slate-900">{quantity}</span>
+                            <span className="min-w-4 text-center text-xs font-bold text-slate-700 tabular-nums select-none">
+                                {quantity}
+                            </span>
                             <button
                                 type="button"
                                 onClick={increaseQuantity}
-                                className="px-3 py-2 text-slate-600 hover:text-slate-900 transition-colors disabled:opacity-40"
+                                className="flex items-center justify-center w-5 h-5 rounded-full text-slate-500 hover:text-slate-700 hover:bg-white transition-all"
                                 aria-label="Increase quantity"
                             >
-                                <Plus size={14} />
+                                <Plus size={10} strokeWidth={3} />
                             </button>
                         </div>
-                        <span className="text-xs text-slate-500 uppercase tracking-[0.2em] font-semibold">
-                            Qty
-                        </span>
                     </div>
 
-                    <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={(e) => onAddToCart(product, quantity, e)}
-                        className={`w-full mt-2 sm:mt-3 py-1.5 sm:py-2 ${isAdded ? 'bg-emerald-600' : 'bg-blue-600 hover:bg-blue-700'
-                            } text-white rounded-md md:rounded-xl font-bold text-[10px] sm:text-sm transition-all duration-200 flex items-center justify-center gap-1 sm:gap-2 shadow-md shadow-blue-600/20 hover:shadow-lg hover:shadow-blue-600/30 relative z-10`}
-                        aria-label={isAdded ? 'Added to cart' : 'Add to cart'}
-                    >
-                        {isAdded ? (
-                            <>
-                                <Check size={12} className="sm:w-4 sm:h-4" />
-                                <span>Added!</span>
-                            </>
-                        ) : (
-                            <>
-                                <ShoppingBag size={12} className="transition-transform sm:w-4 sm:h-4" />
-                                <span>Add to Cart</span>
-                            </>
-                        )}
-                    </motion.button>
-                    {onBuyNow && (
+                    {/* Buttons - Stacked on mobile, side by side on larger screens */}
+                    <div className="flex flex-col sm:flex-row gap-2 mt-2 sm:mt-3">
                         <motion.button
                             whileHover={{ scale: 1.02 }}
                             whileTap={{ scale: 0.98 }}
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                e.preventDefault();
-                                onBuyNow(product, quantity, e);
-                            }}
-                            className="w-full mt-2 sm:mt-3 py-1.5 sm:py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-md md:rounded-xl font-bold text-[10px] sm:text-sm transition-all duration-200 flex items-center justify-center gap-1 sm:gap-2 shadow-md shadow-emerald-500/20 hover:shadow-lg hover:shadow-emerald-500/30 relative z-10"
-                            aria-label="Buy now"
+                            onClick={(e) => onAddToCart(product, quantity, e)}
+                            className={`w-full sm:flex-1 py-1.5 sm:py-2 ${isAdded ? 'bg-orange-600' : 'bg-orange-500 hover:bg-orange-600'
+                                } text-white rounded-md font-bold text-[10px] sm:text-sm transition-all duration-200 flex items-center justify-center gap-1 sm:gap-2 shadow-md shadow-orange-500/20 hover:shadow-lg hover:shadow-orange-500/30 relative z-10`}
+                            aria-label={isAdded ? 'Added to cart' : 'Add to cart'}
                         >
-                            <span>Buy Now</span>
+                            {isAdded ? (
+                                <>
+                                    <Check size={12} className="sm:w-4 sm:h-4" />
+                                    <span>Added!</span>
+                                </>
+                            ) : (
+                                <>
+                                    <ShoppingBag size={12} className="transition-transform sm:w-4 sm:h-4" />
+                                    <span>Add to Cart</span>
+                                </>
+                            )}
                         </motion.button>
-                    )}
+
+                        {onBuyNow && (
+                            <motion.button
+                                whileHover={{ scale: 1.02 }}
+                                whileTap={{ scale: 0.98 }}
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    e.preventDefault();
+                                    onBuyNow(product, quantity, e);
+                                }}
+                                className="w-full sm:flex-1 py-1.5 sm:py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-md font-bold text-[10px] sm:text-sm transition-all duration-200 flex items-center justify-center gap-1 sm:gap-2 shadow-md shadow-blue-600/20 hover:shadow-lg hover:shadow-blue-600/30 relative z-10"
+                                aria-label="Buy now"
+                            >
+                                <Wallet size={12} className="sm:w-4 sm:h-4" />
+                                <span>Buy Now</span>
+                            </motion.button>
+                        )}
+                    </div>
                 </div>
             </div>
         </motion.div>
