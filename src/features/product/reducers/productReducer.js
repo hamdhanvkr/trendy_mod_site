@@ -70,16 +70,17 @@ export function productReducer(state, action) {
         case 'SET_CART':
             return { ...state, cart: action.payload };
         case 'ADD_TO_CART': {
+            const quantity = action.payload.quantity ?? 1;
             const existing = state.cart.find(item => item.id === action.payload.id);
             let newCart;
             if (existing) {
                 newCart = state.cart.map(item =>
                     item.id === action.payload.id
-                        ? { ...item, quantity: item.quantity + 1 }
+                        ? { ...item, quantity: item.quantity + quantity }
                         : item
                 );
             } else {
-                newCart = [...state.cart, { ...action.payload, quantity: 1 }];
+                newCart = [...state.cart, { ...action.payload, quantity }];
             }
             return {
                 ...state,

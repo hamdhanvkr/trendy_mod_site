@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { ShoppingBag, Heart, Eye, Check } from 'lucide-react';
+import { ShoppingBag, Heart, Eye, Check, Minus, Plus } from 'lucide-react';
 import { getDiscountedPrice } from '../data/products';
 import { VIEW_MODES } from '../constants';
 import { Stars } from './Stars';
@@ -14,11 +14,29 @@ export const ProductCard = React.memo(({
     onProductClick,
     onToggleWishlist,
     onAddToCart,
+    onBuyNow,
     index
 }) => {
 
     const discountedPrice = getDiscountedPrice(product.price, product.discount);
     const isListMode = viewMode === VIEW_MODES.LIST;
+    const [quantity, setQuantity] = useState(1);
+
+    useEffect(() => {
+        setQuantity(1);
+    }, [product.id]);
+
+    const decreaseQuantity = (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        setQuantity(prev => Math.max(1, prev - 1));
+    };
+
+    const increaseQuantity = (e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        setQuantity(prev => Math.min(10, prev + 1));
+    };
 
     return (
         <motion.div
@@ -143,10 +161,36 @@ export const ProductCard = React.memo(({
                         )}
                     </div>
 
+                    <div className="mt-3 flex items-center justify-between gap-3">
+                        <div className="inline-flex items-center rounded-full border border-slate-200 bg-slate-50 overflow-hidden">
+                            <button
+                                type="button"
+                                onClick={decreaseQuantity}
+                                className="px-3 py-2 text-slate-600 hover:text-slate-900 transition-colors disabled:opacity-40"
+                                disabled={quantity <= 1}
+                                aria-label="Decrease quantity"
+                            >
+                                <Minus size={14} />
+                            </button>
+                            <span className="w-10 text-center font-bold text-slate-900">{quantity}</span>
+                            <button
+                                type="button"
+                                onClick={increaseQuantity}
+                                className="px-3 py-2 text-slate-600 hover:text-slate-900 transition-colors disabled:opacity-40"
+                                aria-label="Increase quantity"
+                            >
+                                <Plus size={14} />
+                            </button>
+                        </div>
+                        <span className="text-xs text-slate-500 uppercase tracking-[0.2em] font-semibold">
+                            Qty
+                        </span>
+                    </div>
+
                     <motion.button
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
-                        onClick={(e) => onAddToCart(product, e)}
+                        onClick={(e) => onAddToCart(product, quantity, e)}
                         className={`w-full mt-2 sm:mt-3 py-1.5 sm:py-2 ${isAdded ? 'bg-emerald-600' : 'bg-blue-600 hover:bg-blue-700'
                             } text-white rounded-md md:rounded-xl font-bold text-[10px] sm:text-sm transition-all duration-200 flex items-center justify-center gap-1 sm:gap-2 shadow-md shadow-blue-600/20 hover:shadow-lg hover:shadow-blue-600/30 relative z-10`}
                         aria-label={isAdded ? 'Added to cart' : 'Add to cart'}
@@ -163,6 +207,21 @@ export const ProductCard = React.memo(({
                             </>
                         )}
                     </motion.button>
+                    {onBuyNow && (
+                        <motion.button
+                            whileHover={{ scale: 1.02 }}
+                            whileTap={{ scale: 0.98 }}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                e.preventDefault();
+                                onBuyNow(product, quantity, e);
+                            }}
+                            className="w-full mt-2 sm:mt-3 py-1.5 sm:py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-md md:rounded-xl font-bold text-[10px] sm:text-sm transition-all duration-200 flex items-center justify-center gap-1 sm:gap-2 shadow-md shadow-emerald-500/20 hover:shadow-lg hover:shadow-emerald-500/30 relative z-10"
+                            aria-label="Buy now"
+                        >
+                            <span>Buy Now</span>
+                        </motion.button>
+                    )}
                 </div>
             </div>
         </motion.div>

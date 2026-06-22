@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
 import { Check } from 'lucide-react';
 import {
     AnnouncementBar,
@@ -11,6 +11,8 @@ import {
 } from '../components';
 import CartDrawer from '@/features/cart/components/CartDrawer';
 import WishlistDrawer from '@/features/wishlist/components/WishlistDrawer';
+import OrderForm from '@/features/order/components/OrderForm';
+import { getDiscountedPrice } from '@/features/product/data/products';
 import { useNavigate } from 'react-router-dom';
 
 function HomePage() {
@@ -35,9 +37,34 @@ function HomePage() {
     const [isCartOpen, setIsCartOpen] = useState(false);
     const [isWishlistOpen, setIsWishlistOpen] = useState(false);
     const [showAddToCartFeedback, setShowAddToCartFeedback] = useState(false);
+    const [directOrderProduct, setDirectOrderProduct] = useState(null);
+    const [isDirectOrderOpen, setIsDirectOrderOpen] = useState(false);
     const feedbackTimeoutRef = useRef(null);
     const historyStackRef = useRef([]);
     const isProcessingBackRef = useRef(false);
+
+    const directOrderCart = useMemo(() => {
+        if (!directOrderProduct) return [];
+        return [directOrderProduct];
+    }, [directOrderProduct]);
+
+    const directOrderTotal = directOrderCart.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0
+    );
+
+    const closeDirectOrder = useCallback(() => {
+        setIsDirectOrderOpen(false);
+        setDirectOrderProduct(null);
+    }, []);
+
+    const handleDirectOrderClose = useCallback(() => {
+        if (window.history.state?.directOrderOpen) {
+            window.history.back();
+        } else {
+            closeDirectOrder();
+        }
+    }, [closeDirectOrder]);
 
     // Save cart to localStorage
     useEffect(() => {
@@ -60,6 +87,10 @@ function HomePage() {
     // Handle back button for mobile
     useEffect(() => {
         const handlePopState = () => {
+            if (isDirectOrderOpen) {
+                closeDirectOrder();
+                return;
+            }
             if (isProcessingBackRef.current) return;
             if (historyStackRef.current.length > 0) {
 
@@ -93,7 +124,13 @@ function HomePage() {
         return () => {
             window.removeEventListener('popstate', handlePopState);
         };
-    }, [isWishlistOpen, isCartOpen]);
+    }, [isWishlistOpen, isCartOpen, isDirectOrderOpen, closeDirectOrder]);
+
+    useEffect(() => {
+        if (isDirectOrderOpen && !window.history.state?.directOrderOpen) {
+            window.history.pushState({ directOrderOpen: true }, '', window.location.href);
+        }
+    }, [isDirectOrderOpen]);
 
     // Initialize history
     useEffect(() => {
@@ -107,18 +144,18 @@ function HomePage() {
         navigate(`/products/${categoryId}`);
     };
 
-    const handleAddToCart = useCallback((product) => {
+    const handleAddToCart = useCallback((product, quantity = 1) => {
         setCart(prev => {
             const existing = prev.find(item => item.id === product.id);
             let newCart;
             if (existing) {
                 newCart = prev.map(item =>
                     item.id === product.id
-                        ? { ...item, quantity: item.quantity + 1 }
+                        ? { ...item, quantity: item.quantity + quantity }
                         : item
                 );
             } else {
-                newCart = [...prev, { ...product, quantity: 1 }];
+                newCart = [...prev, { ...product, quantity }];
             }
             return newCart;
         });
@@ -133,6 +170,18 @@ function HomePage() {
         feedbackTimeoutRef.current = setTimeout(() => {
             setShowAddToCartFeedback(false);
         }, 3000);
+    }, []);
+
+    const handleCartOpen = useCallback(() => {
+        setIsCartOpen(true);
+        historyStackRef.current.push('cart');
+        window.history.pushState({ drawerOpen: true, type: 'cart' }, '', window.location.href);
+    }, []);
+
+    const handleBuyNow = useCallback((product, quantity = 1) => {
+        const price = getDiscountedPrice(product.price, product.discount);
+        setDirectOrderProduct({ ...product, price, quantity });
+        setIsDirectOrderOpen(true);
     }, []);
 
     const handleWishlistToggle = useCallback((productId) => {
@@ -164,12 +213,6 @@ function HomePage() {
         if (index !== -1) {
             historyStackRef.current.splice(index, 1);
         }
-    }, []);
-
-    const handleCartOpen = useCallback(() => {
-        setIsCartOpen(true);
-        historyStackRef.current.push('cart');
-        window.history.pushState({ drawerOpen: true, type: 'cart' }, '', window.location.href);
     }, []);
 
     const handleCartClose = useCallback(() => {
@@ -215,6 +258,7 @@ function HomePage() {
 
             <FeaturedSection
                 onAddToCart={handleAddToCart}
+                onBuyNow={handleBuyNow}
                 onWishlistToggle={handleWishlistToggle}
                 wishlist={wishlist}
             />
@@ -237,6 +281,15 @@ function HomePage() {
                 wishlist={wishlist}
                 onWishlistToggle={handleWishlistToggle}
                 onAddToCart={handleAddToCart}
+            />
+
+            {/* Order Form Modal Panel Context */}
+            <OrderForm
+                isOpen={isDirectOrderOpen}
+                onClose={handleDirectOrderClose}
+                cart={directOrderCart}
+                total={directOrderTotal}
+                onOrderComplete={handleDirectOrderClose}
             />
         </>
     );

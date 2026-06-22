@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useReducer, useRef } from 'react';
+import React, { useCallback, useEffect, useMemo, useReducer, useRef, useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Helmet } from 'react-helmet-async';
@@ -12,10 +12,11 @@ import {
     Check
 } from 'lucide-react';
 
-import { products, getProductsByCategory } from '../data/products';
+import { products, getProductsByCategory, getDiscountedPrice } from '../data/products';
 import { HomeHeader, SiteFooter } from '@/features/home/components';
 import WishlistDrawer from '@/features/wishlist/components/WishlistDrawer';
 import CartDrawer from '@/features/cart/components/CartDrawer';
+import OrderForm from '@/features/order/components/OrderForm';
 import { useDebounce } from '@/hooks/useDebounce';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { trackEvent } from '@/utils/analytics';
@@ -53,6 +54,58 @@ const ProductsPage = () => {
     const isInitialMount = useRef(true);
     const prevWishlistOpenRef = useRef(state.isWishlistOpen);
     const prevCartOpenRef = useRef(state.isCartOpen);
+    const [directOrderProduct, setDirectOrderProduct] = useState(null);
+    const [isDirectOrderOpen, setIsDirectOrderOpen] = useState(false);
+
+    const directOrderCart = useMemo(() => {
+        if (!directOrderProduct) return [];
+        return [directOrderProduct];
+    }, [directOrderProduct]);
+
+    const directOrderTotal = directOrderCart.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0
+    );
+
+    const handleBuyNow = useCallback((product, quantityOrEvent = 1, maybeEvent) => {
+        let quantity = 1;
+        let e = null;
+
+        if (typeof quantityOrEvent === 'number') {
+            quantity = quantityOrEvent;
+            e = maybeEvent;
+        } else {
+            e = quantityOrEvent;
+        }
+
+        if (e) {
+            e.stopPropagation();
+            e.preventDefault();
+        }
+
+        const price = getDiscountedPrice(product.price, product.discount);
+        setDirectOrderProduct({ ...product, price, quantity });
+        setIsDirectOrderOpen(true);
+    }, []);
+
+    const closeDirectOrder = useCallback(() => {
+        setIsDirectOrderOpen(false);
+        setDirectOrderProduct(null);
+    }, []);
+
+    const handleDirectOrderClose = useCallback(() => {
+        if (window.history.state?.directOrderOpen) {
+            window.history.back();
+        } else {
+            closeDirectOrder();
+        }
+    }, [closeDirectOrder]);
+
+    useEffect(() => {
+        if (isDirectOrderOpen && !window.history.state?.directOrderOpen) {
+            window.history.pushState({ directOrderOpen: true }, '', window.location.href);
+        }
+    }, [isDirectOrderOpen]);
 
     // Sync localStorage with state
     useEffect(() => {
@@ -64,6 +117,10 @@ const ProductsPage = () => {
 
     useEffect(() => {
         const handlePopState = () => {
+            if (isDirectOrderOpen) {
+                closeDirectOrder();
+                return;
+            }
             if (state.isWishlistOpen) {
                 dispatch({ type: 'TOGGLE_WISHLIST_DRAWER', payload: false });
                 return;
@@ -76,7 +133,7 @@ const ProductsPage = () => {
 
         window.addEventListener('popstate', handlePopState);
         return () => window.removeEventListener('popstate', handlePopState);
-    }, [dispatch, state.isWishlistOpen, state.isCartOpen]);
+    }, [dispatch, state.isWishlistOpen, state.isCartOpen, isDirectOrderOpen, closeDirectOrder]);
 
     useEffect(() => {
         if (state.isWishlistOpen || state.isCartOpen) {
@@ -454,7 +511,7 @@ const ProductsPage = () => {
                                     <>
                                         <div className={`grid ${state.viewMode === VIEW_MODES.GRID
                                             ? 'grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4 md:gap-6'
-                                            : 'grid-cols-1 lg:grid-cols-2 gap-4'
+                                            : 'grid-cols-1 lg:grid-cols-3 gap-4'
                                             }`}>
                                             {paginatedProducts.map((product, index) => (
                                                 <ProductCard
@@ -466,6 +523,7 @@ const ProductsPage = () => {
                                                     onProductClick={handleProductClick}
                                                     onToggleWishlist={toggleWishlist}
                                                     onAddToCart={handleAddToCart}
+                                                    onBuyNow={handleBuyNow}
                                                     index={index}
                                                 />
                                             ))}
@@ -495,6 +553,14 @@ const ProductsPage = () => {
             </main>
 
             <SiteFooter />
+
+            <OrderForm
+                isOpen={isDirectOrderOpen}
+                onClose={handleDirectOrderClose}
+                cart={directOrderCart}
+                total={directOrderTotal}
+                onOrderComplete={handleDirectOrderClose}
+            />
         </div>
     );
 };

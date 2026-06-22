@@ -1,12 +1,11 @@
-import React, { useEffect, useReducer, useCallback, useMemo, useRef } from 'react';
+import React, { useEffect, useReducer, useCallback, useMemo, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-
 import { HomeHeader, SiteFooter } from '@/features/home/components';
 import WishlistDrawer from '@/features/wishlist/components/WishlistDrawer';
 import CartDrawer from '@/features/cart/components/CartDrawer';
+import OrderForm from '@/features/order/components/OrderForm';
 import { trackEvent } from '@/utils/analytics';
-
 import {
     ProductBreadcrumb,
     ProductGallery,
@@ -21,6 +20,7 @@ import {
     ProductBenefits
 } from '../components';
 import { useProductDetail } from '../hooks';
+import { getDiscountedPrice } from '../data/products';
 import { useLocalStorage } from '@/hooks/useLocalStorage';
 import { productDetailReducer, productDetailInitialState } from '../reducers';
 import { MIN_QUANTITY, MAX_QUANTITY } from '../constants';
@@ -58,10 +58,29 @@ const ProductDetailPage = () => {
     const [cart, setCart] = useLocalStorage('cart', []);
     const prevWishlistOpenRef = useRef(state.isWishlistOpen);
     const prevCartOpenRef = useRef(state.isCartOpen);
+    const [directOrderProduct, setDirectOrderProduct] = useState(null);
+    const [isDirectOrderOpen, setIsDirectOrderOpen] = useState(false);
+
+    const closeDirectOrder = useCallback(() => {
+        setIsDirectOrderOpen(false);
+        setDirectOrderProduct(null);
+    }, []);
+
+    const handleDirectOrderClose = useCallback(() => {
+        if (window.history.state?.directOrderOpen) {
+            window.history.back();
+        } else {
+            closeDirectOrder();
+        }
+    }, [closeDirectOrder]);
 
     // Back button handling for open drawers
     useEffect(() => {
         const handlePopState = () => {
+            if (isDirectOrderOpen) {
+                closeDirectOrder();
+                return;
+            }
             if (state.isWishlistOpen) {
                 dispatch({ type: 'TOGGLE_WISHLIST_DRAWER', payload: false });
                 return;
@@ -74,13 +93,19 @@ const ProductDetailPage = () => {
 
         window.addEventListener('popstate', handlePopState);
         return () => window.removeEventListener('popstate', handlePopState);
-    }, [dispatch, state.isWishlistOpen, state.isCartOpen]);
+    }, [dispatch, state.isWishlistOpen, state.isCartOpen, isDirectOrderOpen, closeDirectOrder]);
 
     useEffect(() => {
         if (state.isWishlistOpen || state.isCartOpen) {
             window.history.pushState({ drawerOpen: true }, '', window.location.href);
         }
     }, [state.isWishlistOpen, state.isCartOpen]);
+
+    useEffect(() => {
+        if (isDirectOrderOpen && !window.history.state?.directOrderOpen) {
+            window.history.pushState({ directOrderOpen: true }, '', window.location.href);
+        }
+    }, [isDirectOrderOpen]);
 
     useEffect(() => {
         if (prevWishlistOpenRef.current && !state.isWishlistOpen) {
@@ -182,9 +207,10 @@ const ProductDetailPage = () => {
 
     const handleBuyNow = useCallback(() => {
         if (!product) return;
-        handleAddToCart();
-        setTimeout(() => navigate('/checkout'), 500);
-    }, [product, handleAddToCart, navigate]);
+        const price = getDiscountedPrice(product.price, product.discount);
+        setDirectOrderProduct({ ...product, price, quantity: state.quantity });
+        setIsDirectOrderOpen(true);
+    }, [product, state.quantity]);
 
     const handleWishlistToggle = useCallback((e) => {
         if (e) {
@@ -276,6 +302,16 @@ const ProductDetailPage = () => {
     const handleSearch = useCallback((query) => {
         navigate(`/products?search=${encodeURIComponent(query)}`);
     }, [navigate]);
+
+    const directOrderCart = useMemo(() => {
+        if (!directOrderProduct) return [];
+        return [directOrderProduct];
+    }, [directOrderProduct]);
+
+    const directOrderTotal = directOrderCart.reduce(
+        (sum, item) => sum + item.price * item.quantity,
+        0
+    );
 
     // Common header props
     const headerProps = {
@@ -404,6 +440,13 @@ const ProductDetailPage = () => {
             </main>
 
             <SiteFooter />
+            <OrderForm
+                isOpen={isDirectOrderOpen}
+                onClose={handleDirectOrderClose}
+                cart={directOrderCart}
+                total={directOrderTotal}
+                onOrderComplete={handleDirectOrderClose}
+            />
         </div>
     );
 };

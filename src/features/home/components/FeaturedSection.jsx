@@ -5,6 +5,9 @@ import {
     ShoppingBag,
     Heart,
     Eye,
+    Wallet,
+    Plus,
+    Minus,
     ArrowRight,
     ChevronLeft,
     ChevronRight,
@@ -136,12 +139,16 @@ const useResponsiveItems = (totalItems) => {
     return { itemsPerView, isMobile };
 };
 
-const FeaturedSection = ({ onAddToCart, onWishlistToggle, wishlist = [] }) => {
+const MAX_FEATURED_QUANTITY = 10;
+const MIN_FEATURED_QUANTITY = 1;
+
+const FeaturedSection = ({ onAddToCart, onWishlistToggle, onBuyNow, wishlist = [] }) => {
 
     const navigate = useNavigate();
     const containerRef = useRef(null);
     const [featuredProducts, setFeaturedProducts] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [quantities, setQuantities] = useState({});
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [isHovering, setIsHovering] = useState(false);
@@ -308,20 +315,49 @@ const FeaturedSection = ({ onAddToCart, onWishlistToggle, wishlist = [] }) => {
         navigate(`/product/${productId}`);
     }, [navigate]);
 
+    const getFeaturedQuantity = useCallback((productId) => quantities[productId] ?? 1, [quantities]);
+
+    const updateFeaturedQuantity = useCallback((productId, delta) => {
+        setQuantities(prev => {
+            const current = prev[productId] ?? 1;
+            const next = Math.max(MIN_FEATURED_QUANTITY, Math.min(MAX_FEATURED_QUANTITY, current + delta));
+            return { ...prev, [productId]: next };
+        });
+    }, []);
+
     const handleAddToCartClick = useCallback((product, e) => {
         e.stopPropagation();
         e.preventDefault();
+        const quantity = getFeaturedQuantity(product.id);
         if (onAddToCart) {
-            onAddToCart(product);
+            onAddToCart(product, quantity);
             setAddedToCart(prev => ({ ...prev, [product.id]: true }));
             const timer = setTimeout(() => {
                 setAddedToCart(prev => ({ ...prev, [product.id]: false }));
             }, 2000);
             return () => clearTimeout(timer);
         } else {
-            console.log('Add to cart:', product.id);
+            console.log('Add to cart:', product.id, 'quantity:', quantity);
         }
-    }, [onAddToCart]);
+    }, [onAddToCart, getFeaturedQuantity]);
+
+    const handleBuyNowClick = useCallback((product, e) => {
+        e.stopPropagation();
+        e.preventDefault();
+        const quantity = getFeaturedQuantity(product.id);
+        if (onBuyNow) {
+            onBuyNow(product, quantity);
+        } else if (onAddToCart) {
+            onAddToCart(product, quantity);
+            setAddedToCart(prev => ({ ...prev, [product.id]: true }));
+            const timer = setTimeout(() => {
+                setAddedToCart(prev => ({ ...prev, [product.id]: false }));
+            }, 2000);
+            return () => clearTimeout(timer);
+        } else {
+            console.log('Buy now:', product.id, 'quantity:', quantity);
+        }
+    }, [onBuyNow, onAddToCart, getFeaturedQuantity]);
 
     const handleWishlistClick = useCallback((productId, e) => {
         e.stopPropagation();
@@ -608,6 +644,46 @@ const FeaturedSection = ({ onAddToCart, onWishlistToggle, wishlist = [] }) => {
                                                 )}
                                             </div>
 
+                                            <div className="mt-3 flex flex-col sm:flex-row items-center gap-2">
+                                                <div className="flex items-center gap-1 border border-slate-200 rounded-full overflow-hidden bg-slate-50">
+                                                    <button
+                                                        type="button"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            e.preventDefault();
+                                                            updateFeaturedQuantity(product.id, -1);
+                                                        }}
+                                                        className="px-2 py-1 text-slate-500 hover:text-slate-900 transition-colors"
+                                                        aria-label="Decrease quantity"
+                                                    >
+                                                        <Minus size={14} />
+                                                    </button>
+                                                    <span className="w-8 text-center text-sm font-bold text-slate-800">{getFeaturedQuantity(product.id)}</span>
+                                                    <button
+                                                        type="button"
+                                                        onClick={(e) => {
+                                                            e.stopPropagation();
+                                                            e.preventDefault();
+                                                            updateFeaturedQuantity(product.id, 1);
+                                                        }}
+                                                        className="px-2 py-1 text-slate-500 hover:text-slate-900 transition-colors"
+                                                        aria-label="Increase quantity"
+                                                    >
+                                                        <Plus size={14} />
+                                                    </button>
+                                                </div>
+
+                                                <motion.button
+                                                    whileHover={{ scale: 1.02 }}
+                                                    whileTap={{ scale: 0.98 }}
+                                                    onClick={(e) => handleBuyNowClick(product, e)}
+                                                    className="flex-1 w-full sm:w-auto mt-0 sm:mt-0 py-1.5 sm:py-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-md md:rounded-xl font-bold text-[10px] sm:text-sm transition-all duration-200 flex items-center justify-center gap-1 sm:gap-2 shadow-md shadow-emerald-500/20 hover:shadow-lg hover:shadow-emerald-500/30 relative z-10"
+                                                    aria-label="Buy now"
+                                                >
+                                                    <Wallet size={12} className="sm:w-4 sm:h-4" aria-hidden="true" />
+                                                    <span>Buy Now</span>
+                                                </motion.button>
+                                            </div>
                                             <motion.button
                                                 whileHover={{ scale: 1.02 }}
                                                 whileTap={{ scale: 0.98 }}
