@@ -43,7 +43,7 @@ const OrderForm = ({ isOpen, onClose, cart, total, onOrderComplete }) => {
         };
     }, [isOpen]);
 
-    const deliveryCharge = formData.location === 'tamilnadu' ? 80 : 150;
+    const deliveryCharge = formData.location === 'tamilnadu' ? 50 : 80;
     const subtotal = total;
     const isFreeDelivery = subtotal >= 1000;
     const grandTotal = isFreeDelivery ? subtotal : subtotal + deliveryCharge;
@@ -64,44 +64,67 @@ const OrderForm = ({ isOpen, onClose, cart, total, onOrderComplete }) => {
     };
 
     const generateWhatsAppMessage = () => {
-        let message = "🤖 TrendyMod - New Order\n\n";
-        message += "━━━━━━━━━━━━━━━━━━━━━━\n";
-        message += "👤 CUSTOMER DETAILS\n";
-        message += "━━━━━━━━━━━━━━━━━━━━━━\n";
-        message += "Name: " + formData.name + "\n";
-        message += "Phone: " + formData.phone + "\n";
-        message += "Address: " + formData.address + "\n";
-        message += "Landmark: " + (formData.landmark || 'N/A') + "\n";
-        message += "Pincode: " + formData.pincode + "\n";
-        message += "Region: " + (formData.location === 'tamilnadu' ? 'Tamil Nadu' : 'Outside Tamil Nadu') + "\n\n";
-        message += "━━━━━━━━━━━━━━━━━━━━━━\n";
-        message += "🛒 ORDER ITEMS\n";
-        message += "━━━━━━━━━━━━━━━━━━━━━━\n";
-        cart.forEach((item, idx) => {
-            message += (idx + 1) + ". 🎁 " + item.name + "\n";
-            message += "   Qty: " + item.quantity + " × ₹" + item.price + " = ₹" + (item.price * item.quantity) + "\n";
+
+        const orderDate = new Date().toLocaleString('en-IN', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
         });
-        message += "━━━━━━━━━━━━━━━━━━━━━━\n";
-        message += "💰 ORDER SUMMARY\n";
-        message += "━━━━━━━━━━━━━━━━━━━━━━\n";
-        message += "Subtotal: ₹" + subtotal + "\n";
+
+        let message = "TRENDY MOD TOYS - NEW ORDER\n\n";
+
+        message += "ORDER DATE : " + orderDate + "\n\n";
+        message += "===============================\n";
+        message += "CUSTOMER DETAILS\n";
+        message += "===============================\n";
+        message += "Name      : " + formData.name + "\n";
+        message += "Phone     : " + formData.phone + "\n";
+        message += "Address   : " + formData.address + "\n";
+        message += "Landmark  : " + (formData.landmark || "N/A") + "\n";
+        message += "Pincode   : " + formData.pincode + "\n";
+        message += "Region    : " +
+            (formData.location === "tamilnadu"
+                ? "Tamil Nadu"
+                : "Outside Tamil Nadu") +
+            "\n\n";
+        message += "===============================\n";
+        message += "ORDER ITEMS\n";
+        message += "===============================\n";
+
+        cart.forEach((item, idx) => {
+            message += `${idx + 1}. ${item.name}\n`;
+            message += `   Qty : ${item.quantity}\n`;
+            message += `   Price : ₹${item.price}\n`;
+            message += `   Total : ₹${item.price * item.quantity}\n\n`;
+        });
+
+        message += "===============================\n";
+        message += "ORDER SUMMARY\n";
+        message += "===============================\n";
+        message += "Subtotal      : ₹" + subtotal + "\n";
 
         if (isFreeDelivery) {
-            message += "Delivery: 🎉 FREE (Above ₹1000)\n";
+            message += "Delivery Fee  : FREE\n";
         } else {
-            message += "Delivery: ₹" + deliveryCharge + " (" + (formData.location === 'tamilnadu' ? 'Tamil Nadu' : 'Outside Tamil Nadu') + ")\n";
+            message += "Delivery Fee  : ₹" + deliveryCharge + "\n";
         }
 
-        message += "────────────────────\n";
-        message += "Grand Total: ₹" + grandTotal + "\n";
-        message += "Total Items: " + totalItems + "\n\n";
+        message += "Total Items   : " + totalItems + "\n";
+        message += "Grand Total   : ₹" + grandTotal + "\n\n";
 
         if (formData.instructions) {
-            message += "📝 Instructions: " + formData.instructions + "\n\n";
+            message += "===============================\n";
+            message += "SPECIAL INSTRUCTIONS\n";
+            message += "===============================\n";
+            message += formData.instructions + "\n\n";
         }
 
-        message += "━━━━━━━━━━━━━━━━━━━━━━\n";
-        message += "🙏 Thank you for choosing TrendyMod!";
+        message += "===============================\n";
+        message += "Thank you for shopping with TrendyMod Toys.\n";
+        message += "We will contact you shortly to confirm your order.";
 
         return encodeURIComponent(message);
     };
@@ -134,6 +157,9 @@ const OrderForm = ({ isOpen, onClose, cart, total, onOrderComplete }) => {
             onClose();
         }, 2000);
     };
+
+    const requiredFields = ['name', 'address', 'phone', 'pincode'];
+    const isFieldRequired = (fieldName) => requiredFields.includes(fieldName);
 
     const inputFields = [
         { name: 'name', label: 'Full Name', icon: User, type: 'text', placeholder: 'Enter your full name' },
@@ -170,16 +196,7 @@ const OrderForm = ({ isOpen, onClose, cart, total, onOrderComplete }) => {
                         <div className="p-4 sm:p-5 border-b border-slate-100 bg-white flex items-center justify-between">
                             <div className="min-w-0 pr-2">
                                 <div className="flex items-center gap-2">
-                                    <button
-                                        onClick={onClose}
-                                        className="flex items-center gap-1 text-xs font-bold text-blue-600 hover:text-blue-700 transition-colors"
-                                    >
-                                        <ArrowLeft size={14} /> Back
-                                    </button>
                                     <h2 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight truncate">Shipping Info</h2>
-                                    <span className="text-xs font-semibold px-2 py-0.5 bg-blue-50 text-blue-700 border border-blue-100 rounded-full shrink-0">
-                                        Step 2
-                                    </span>
                                 </div>
                                 <p className="text-[11px] sm:text-xs text-slate-500 mt-1 font-medium truncate">
                                     Complete details to finalize your WhatsApp dispatch
@@ -218,9 +235,7 @@ const OrderForm = ({ isOpen, onClose, cart, total, onOrderComplete }) => {
                                         <div className="text-[11px] sm:text-xs">
                                             <p className="font-bold text-slate-800">Fulfillment Verification</p>
                                             <p className="text-slate-500 mt-0.5 font-medium">
-                                                {isFreeDelivery
-                                                    ? "✨ Bulk Tier Reward: Zero-fee shipping confirmed!"
-                                                    : "Standard shipping metrics apply to this package destination."}
+                                                Standard shipping metrics apply to this package destination.
                                             </p>
                                         </div>
                                     </div>
@@ -228,9 +243,11 @@ const OrderForm = ({ isOpen, onClose, cart, total, onOrderComplete }) => {
                                     {/* Form Fields Stack */}
                                     <div className="space-y-3.5">
                                         {inputFields.map((field) => (
-                                            <div key={field.name} className="space-y-1">
+                                            <div key={field.name} className="space-y-2">
                                                 <label className="block text-xs font-bold text-slate-700 ml-0.5">
-                                                    {field.label} {!field.name.includes('Optional') && <span className="text-red-500">*</span>}
+                                                    {field.label}
+                                                    {/* Use the helper function to determine if field is required */}
+                                                    {isFieldRequired(field.name) && <span className="text-red-500"> *</span>}
                                                 </label>
                                                 <div className="relative flex items-center">
                                                     <div className={`absolute left-3 text-slate-400 transition-colors pointer-events-none ${focusedField === field.name ? 'text-blue-600' : ''}`}>
@@ -246,14 +263,15 @@ const OrderForm = ({ isOpen, onClose, cart, total, onOrderComplete }) => {
                                                         maxLength={field.maxLength}
                                                         className="w-full h-10 pl-9 pr-3 border border-slate-200 focus:border-blue-500 rounded-xl text-xs sm:text-sm text-slate-800 placeholder-slate-400 focus:outline-none transition-all shadow-sm shadow-slate-100/50"
                                                         placeholder={field.placeholder}
-                                                        required={!field.name.includes('Optional')}
+                                                        // Only set required for fields that are in the requiredFields array
+                                                        required={isFieldRequired(field.name)}
                                                     />
                                                 </div>
                                             </div>
                                         ))}
 
                                         {/* Dropdown Field */}
-                                        <div className="space-y-1">
+                                        <div className="space-y-2">
                                             <label className="block text-xs font-bold text-slate-700 ml-0.5">
                                                 Delivery Destination Region <span className="text-red-500">*</span>
                                             </label>
@@ -263,8 +281,8 @@ const OrderForm = ({ isOpen, onClose, cart, total, onOrderComplete }) => {
                                                     onChange={(e) => setFormData({ ...formData, location: e.target.value })}
                                                     className="w-full h-10 pl-9 pr-8 bg-white border border-slate-200 focus:border-blue-500 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none transition-all shadow-sm shadow-slate-100/50 appearance-none cursor-pointer"
                                                 >
-                                                    <option value="tamilnadu">Tamil Nadu Region (Standard: ₹80)</option>
-                                                    <option value="outside">Domestic - Rest of India (Standard: ₹150)</option>
+                                                    <option value="tamilnadu">Tamil Nadu Region (Standard : ₹50)</option>
+                                                    <option value="outside">Domestic - Rest of India (Standard : ₹80)</option>
                                                 </select>
                                                 <MapPin className="absolute left-3 text-slate-400 pointer-events-none" size={15} />
                                                 <div className="absolute right-3 pointer-events-none text-slate-400">

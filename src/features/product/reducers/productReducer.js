@@ -1,5 +1,9 @@
 import { MAX_PRICE } from '../constants';
 
+const ensureArray = (value) => {
+    return Array.isArray(value) ? value : [];
+};
+
 export const initialState = {
     products: [],
     categoryName: 'All Products',
@@ -20,111 +24,157 @@ export const initialState = {
     isInitialized: false
 };
 
+// Helper to ensure safe state
+const createSafeState = (state) => {
+    return {
+        ...state,
+        cart: ensureArray(state.cart),
+        wishlist: ensureArray(state.wishlist),
+        products: ensureArray(state.products),
+        selectedCategories: ensureArray(state.selectedCategories)
+    };
+};
+
 export function productReducer(state, action) {
+
+    const safeState = createSafeState(state);
     
     switch (action.type) {
         case 'SET_PRODUCTS':
             return {
-                ...state,
-                products: action.payload,
+                ...safeState,
+                products: ensureArray(action.payload),
                 loading: false,
                 error: null,
                 isInitialized: true
             };
+            
         case 'SET_LOADING':
-            return { ...state, loading: action.payload };
+            return { ...safeState, loading: action.payload };
+            
         case 'SET_ERROR':
-            return { ...state, error: action.payload, loading: false };
+            return { ...safeState, error: action.payload, loading: false };
+            
         case 'SET_SEARCH_QUERY':
-            return { ...state, searchQuery: action.payload, currentPage: 1 };
+            return { ...safeState, searchQuery: action.payload, currentPage: 1 };
+            
         case 'SET_SORT_BY':
-            return { ...state, sortBy: action.payload, currentPage: 1 };
+            return { ...safeState, sortBy: action.payload, currentPage: 1 };
+            
         case 'SET_PRICE_RANGE':
-            return { ...state, priceRange: action.payload, currentPage: 1 };
+            return { ...safeState, priceRange: action.payload, currentPage: 1 };
+            
         case 'TOGGLE_CATEGORY_FILTER': {
             const category = action.payload;
+            const currentCategories = ensureArray(safeState.selectedCategories);
             return {
-                ...state,
-                selectedCategories: state.selectedCategories.includes(category)
-                    ? state.selectedCategories.filter(c => c !== category)
-                    : [...state.selectedCategories, category],
+                ...safeState,
+                selectedCategories: currentCategories.includes(category)
+                    ? currentCategories.filter(c => c !== category)
+                    : [...currentCategories, category],
                 currentPage: 1
             };
         }
+        
         case 'SET_VIEW_MODE':
-            return { ...state, viewMode: action.payload };
+            return { ...safeState, viewMode: action.payload };
+            
         case 'SET_CURRENT_PAGE':
-            return { ...state, currentPage: action.payload };
+            return { ...safeState, currentPage: action.payload };
+            
         case 'SET_WISHLIST':
-            return { ...state, wishlist: action.payload };
+            return { 
+                ...safeState, 
+                wishlist: ensureArray(action.payload) 
+            };
+            
         case 'TOGGLE_WISHLIST': {
             const productId = action.payload;
-            const isInWishlist = state.wishlist.includes(productId);
+            const currentWishlist = ensureArray(safeState.wishlist);
+            const isInWishlist = currentWishlist.includes(productId);
             return {
-                ...state,
+                ...safeState,
                 wishlist: isInWishlist
-                    ? state.wishlist.filter(id => id !== productId)
-                    : [...state.wishlist, productId]
+                    ? currentWishlist.filter(id => id !== productId)
+                    : [...currentWishlist, productId]
             };
         }
+        
         case 'SET_CART':
-            return { ...state, cart: action.payload };
+            return { 
+                ...safeState, 
+                cart: ensureArray(action.payload) 
+            };
+            
         case 'ADD_TO_CART': {
+            const currentCart = ensureArray(safeState.cart);
             const quantity = action.payload.quantity ?? 1;
-            const existing = state.cart.find(item => item.id === action.payload.id);
+            const existing = currentCart.find(item => item && item.id === action.payload.id);
             let newCart;
             if (existing) {
-                newCart = state.cart.map(item =>
-                    item.id === action.payload.id
-                        ? { ...item, quantity: item.quantity + quantity }
+                newCart = currentCart.map(item =>
+                    item && item.id === action.payload.id
+                        ? { ...item, quantity: (item.quantity || 0) + quantity }
                         : item
                 );
             } else {
-                newCart = [...state.cart, { ...action.payload, quantity }];
+                newCart = [...currentCart, { ...action.payload, quantity }];
             }
             return {
-                ...state,
+                ...safeState,
                 cart: newCart,
-                addedToCart: { ...state.addedToCart, [action.payload.id]: true }
+                addedToCart: { ...safeState.addedToCart, [action.payload.id]: true }
             };
         }
-        case 'REMOVE_FROM_CART':
+        
+        case 'REMOVE_FROM_CART': {
+            const currentCart = ensureArray(safeState.cart);
             return {
-                ...state,
-                cart: state.cart.filter(item => item.id !== action.payload)
+                ...safeState,
+                cart: currentCart.filter(item => item && item.id !== action.payload)
             };
-        case 'UPDATE_CART_QUANTITY':
+        }
+        
+        case 'UPDATE_CART_QUANTITY': {
+            const currentCart = ensureArray(safeState.cart);
             return {
-                ...state,
-                cart: state.cart.map(item =>
-                    item.id === action.payload.id
-                        ? { ...item, quantity: Math.max(0, item.quantity + action.payload.delta) }
+                ...safeState,
+                cart: currentCart.map(item =>
+                    item && item.id === action.payload.id
+                        ? { ...item, quantity: Math.max(0, (item.quantity || 0) + action.payload.delta) }
                         : item
                 )
             };
-        case 'CLEAR_CART_ITEM_FEEDBACK': {
-            // eslint-disable-next-line no-unused-vars
-            const { [action.payload]: _, ...rest } = state.addedToCart;
-            return { ...state, addedToCart: rest };
         }
+        
+        case 'CLEAR_CART_ITEM_FEEDBACK': {
+            const { [action.payload]: _, ...rest } = safeState.addedToCart;
+            return { ...safeState, addedToCart: rest };
+        }
+        
         case 'TOGGLE_WISHLIST_DRAWER':
-            return { ...state, isWishlistOpen: action.payload };
+            return { ...safeState, isWishlistOpen: action.payload };
+            
         case 'TOGGLE_CART_DRAWER':
-            return { ...state, isCartOpen: action.payload };
+            return { ...safeState, isCartOpen: action.payload };
+            
         case 'TOGGLE_MOBILE_FILTERS':
-            return { ...state, showMobileFilters: !state.showMobileFilters };
+            return { ...safeState, showMobileFilters: !safeState.showMobileFilters };
+            
         case 'CLEAR_FILTERS':
             return {
-                ...state,
+                ...safeState,
                 selectedCategories: [],
                 priceRange: { min: 0, max: MAX_PRICE },
                 sortBy: 'default',
                 searchQuery: '',
                 currentPage: 1
             };
+            
         case 'SET_CATEGORY_NAME':
-            return { ...state, categoryName: action.payload };
+            return { ...safeState, categoryName: action.payload };
+            
         default:
-            return state;
+            return safeState;
     }
 }

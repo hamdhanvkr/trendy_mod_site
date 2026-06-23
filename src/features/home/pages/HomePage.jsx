@@ -113,7 +113,6 @@ function HomePage() {
                     return;
                 }
 
-                // If we get here, clear the history
                 historyStackRef.current = [];
                 isProcessingBackRef.current = false;
             }
@@ -225,6 +224,18 @@ function HomePage() {
 
     const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
+    const handleExploreCollection = useCallback(() => {
+        navigate('/products/all?featured=true');
+    }, [navigate]);
+
+    const handleViewLatestDrops = useCallback(() => {
+        navigate('/products/all?sort=newest');
+    }, [navigate]);
+
+    const handleShopFreeShipping = useCallback(() => {
+        handleCartOpen();
+    }, [handleCartOpen]);
+
     return (
         <>
             {/* Add to Cart Feedback */}
@@ -254,13 +265,17 @@ function HomePage() {
                 onViewCollection={handleViewAllProducts}
             />
 
-            <PromoBanner />
-
             <FeaturedSection
                 onAddToCart={handleAddToCart}
                 onBuyNow={handleBuyNow}
                 onWishlistToggle={handleWishlistToggle}
                 wishlist={wishlist}
+            />
+
+            <PromoBanner
+                onExploreCollection={handleExploreCollection}
+                onViewLatestDrops={handleViewLatestDrops}
+                onShopFreeShipping={handleShopFreeShipping}
             />
 
             <StatsSection />

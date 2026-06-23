@@ -1,6 +1,7 @@
 import React, { useEffect, useReducer, useCallback, useMemo, useRef, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import { ChevronLeft } from "lucide-react";
 import { HomeHeader, SiteFooter } from '@/features/home/components';
 import WishlistDrawer from '@/features/wishlist/components/WishlistDrawer';
 import CartDrawer from '@/features/cart/components/CartDrawer';
@@ -376,17 +377,11 @@ const ProductDetailPage = () => {
                 {/* Back Button */}
                 <button
                     onClick={() => navigate(-1)}
-                    className="inline-flex items-center gap-2 text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors mb-6 group"
+                    className="inline-flex items-center jutify-center gap-1 text-sm font-semibold text-slate-600 hover:text-blue-600 transition-colors mb-6 group"
                     aria-label="Go back"
                 >
-                    <motion.span
-                        animate={{ x: 0 }}
-                        whileHover={{ x: -4 }}
-                        className="inline-block"
-                    >
-                        ←
-                    </motion.span>
-                    Back
+                    <ChevronLeft className="w-4 h-4" />
+                    <span className='-mt-0.5'>Back</span>
                 </button>
 
                 {/* Main Product Section */}

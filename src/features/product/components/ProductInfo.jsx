@@ -1,7 +1,7 @@
 import React from 'react';
 import { ChevronDown, ChevronUp, Check } from 'lucide-react';
 import { Stars } from './Stars';
-import { getDiscountedPrice } from '../data/products';
+import { getDiscountedPrice, getOriginalPrice, getDiscountAmount } from '../data/products';
 import { PRODUCT_FEATURES } from '../constants';
 
 export const ProductInfo = React.memo(({
@@ -11,10 +11,11 @@ export const ProductInfo = React.memo(({
     showFullDescription,
     onToggleDescription,
 }) => {
-    if (!product) return null;
 
-    const discountedPrice = getDiscountedPrice(product.price, product.discount);
-    const savings = product.price - discountedPrice;
+    if (!product) return null;
+    const discountedPrice = getDiscountedPrice(product.price);
+    const originalPrice = getOriginalPrice(product.price, product.discount);
+    const savings = getDiscountAmount(product.price, product.discount);
 
     return (
         <div className="space-y-5 lg:space-y-6">
@@ -40,7 +41,7 @@ export const ProductInfo = React.memo(({
                 {product.discount > 0 && (
                     <div className="flex items-center gap-2">
                         <span className="text-base sm:text-lg text-slate-400 line-through font-medium">
-                            ₹{product.price}
+                            ₹{originalPrice}
                         </span>
                         <span className="px-2.5 py-0.5 text-xs sm:text-sm font-bold text-emerald-700 bg-emerald-100/80 rounded-lg backdrop-blur-sm">
                             Save ₹{savings}

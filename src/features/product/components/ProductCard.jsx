@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
 import { ShoppingBag, Heart, Eye, Check, Minus, Plus, Wallet } from 'lucide-react';
-import { getDiscountedPrice } from '../data/products';
+import { getDiscountedPrice, getOriginalPrice, getDiscountAmount } from '../data/products';
 import { VIEW_MODES } from '../constants';
 import { Stars } from './Stars';
 import { ProductImage } from './ProductImage';
@@ -18,7 +18,9 @@ export const ProductCard = React.memo(({
     index
 }) => {
 
-    const discountedPrice = getDiscountedPrice(product.price, product.discount);
+    const discountedPrice = getDiscountedPrice(product.price);
+    const originalPrice = getOriginalPrice(product.price, product.discount);
+    const discountAmount = getDiscountAmount(product.price, product.discount);
     const isListMode = viewMode === VIEW_MODES.LIST;
     const [quantity, setQuantity] = useState(1);
 
@@ -53,8 +55,8 @@ export const ProductCard = React.memo(({
             {/* Product Image */}
             <div
                 className={`relative bg-linear-to-br from-slate-50 to-slate-100 overflow-hidden shrink-0 ${isListMode
-                        ? 'w-32 sm:w-40 lg:w-48 h-full'
-                        : 'aspect-square'
+                    ? 'w-32 sm:w-40 lg:w-48 h-full'
+                    : 'aspect-square'
                     }`}
             >
                 <ProductImage
@@ -96,8 +98,8 @@ export const ProductCard = React.memo(({
                         <Heart
                             size={14}
                             className={`${isInWishlist
-                                    ? 'fill-rose-500 text-rose-500'
-                                    : 'text-slate-600'
+                                ? 'fill-rose-500 text-rose-500'
+                                : 'text-slate-600'
                                 } transition-colors duration-200 sm:w-4 sm:h-4`}
                         />
                     </motion.button>
@@ -154,10 +156,10 @@ export const ProductCard = React.memo(({
                             {product.discount > 0 && (
                                 <>
                                     <span className="text-[10px] sm:text-sm text-slate-400 line-through">
-                                        ₹{product.price}
+                                        ₹{originalPrice}
                                     </span>
                                     <span className="text-[8px] sm:text-xs font-bold text-emerald-600 bg-emerald-50 px-1 sm:px-1.5 py-0.5 rounded">
-                                        Save ₹{product.price - discountedPrice}
+                                        Save ₹{discountAmount}
                                     </span>
                                 </>
                             )}

@@ -68,6 +68,7 @@ const ProductsPage = () => {
     );
 
     const handleBuyNow = useCallback((product, quantityOrEvent = 1, maybeEvent) => {
+
         let quantity = 1;
         let e = null;
 
@@ -534,7 +535,7 @@ const ProductsPage = () => {
                                             <div className="mt-8 text-center">
                                                 <button
                                                     onClick={() => loadMore(hasMore, state.loading, state.currentPage)}
-                                                    className="px-8 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-md shadow-blue-600/20"
+                                                    className="px-8 py-2 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700 transition-colors shadow-md shadow-blue-600/20"
                                                     aria-label="Load more products"
                                                 >
                                                     Load More

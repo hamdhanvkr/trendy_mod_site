@@ -12,7 +12,7 @@ const CartDrawer = ({ isOpen, onClose, cart, setCart }) => {
     const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
 
     // Delivery settings
-    const deliveryCharge = 80;
+    const deliveryCharge = 50;
     const freeDeliveryThreshold = 1000;
     const isFreeDelivery = subtotal >= freeDeliveryThreshold;
     const total = isFreeDelivery ? subtotal : subtotal + deliveryCharge;
@@ -92,9 +92,7 @@ const CartDrawer = ({ isOpen, onClose, cart, setCart }) => {
                                     </div>
                                     {cart.length > 0 && (
                                         <p className="text-[11px] sm:text-xs text-slate-500 mt-1 font-medium truncate">
-                                            {isFreeDelivery
-                                                ? "✨ Premium tier: Free Delivery applied"
-                                                : `Add ₹${freeDeliveryThreshold - subtotal} more for free delivery`}
+                                            {`Add ₹${freeDeliveryThreshold - subtotal} more for free delivery`}
                                         </p>
                                     )}
                                 </div>

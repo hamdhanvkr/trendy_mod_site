@@ -47,7 +47,7 @@ function StatsSection() {
     ];
 
     return (
-        <section className="w-full mt-3 mb-10 dark:bg-slate-900/50 transition-colors duration-300">
+        <section className="w-full mt-6 mb-10 dark:bg-slate-900/50 transition-colors duration-300">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
 
                 {/* Section Header */}

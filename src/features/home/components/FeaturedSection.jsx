@@ -15,7 +15,7 @@ import {
     ImageOff,
     Check
 } from 'lucide-react';
-import { getFeaturedProducts, getDiscountedPrice } from '../../product/data/products';
+import { getFeaturedProducts, getDiscountedPrice, getOriginalPriceForDisplay, getDiscountAmount } from '../../product/data/products';
 import { useNavigate } from 'react-router-dom';
 
 const ProductImage = React.memo(({ src, alt }) => {
@@ -337,7 +337,7 @@ const FeaturedSection = ({ onAddToCart, onWishlistToggle, onBuyNow, wishlist = [
             }, 2000);
             return () => clearTimeout(timer);
         } else {
-            console.log('Add to cart:', product.id, 'quantity:', quantity);
+            console.log('Add to cart :', product.id, 'quantity:', quantity);
         }
     }, [onAddToCart, getFeaturedQuantity]);
 
@@ -444,19 +444,18 @@ const FeaturedSection = ({ onAddToCart, onWishlistToggle, onBuyNow, wishlist = [
     }
 
     return (
-        <section className="py-4 sm:py-6 lg:py-8 bg-linear-to-b from-white via-slate-50/50 to-white mt-8">
+        <section className="py-4 sm:py-6 lg:py-8 bg-linear-to-b from-white via-slate-50/50 to-white">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8" ref={containerRef}>
 
-                {/* Section Header */}
                 <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 sm:mb-10">
                     <div>
                         <div className="flex items-center gap-2 mb-2">
                             <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 tracking-tight">
-                                Featured Toys
+                                Explore Our Collections
                             </h2>
                         </div>
                         <p className="text-slate-500 text-sm sm:text-base max-w-xl">
-                            Handpicked premium toys that kids absolutely love
+                            Discover premium products carefully selected for every need.
                         </p>
                     </div>
                     <motion.button
@@ -471,7 +470,7 @@ const FeaturedSection = ({ onAddToCart, onWishlistToggle, onBuyNow, wishlist = [
                 </div>
 
                 {/* Category Cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 mb-8 sm:mb-10">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 mb-10 sm:mb-12">
                     {categories.map((category, index) => (
                         <motion.button
                             key={category.id}
@@ -499,9 +498,23 @@ const FeaturedSection = ({ onAddToCart, onWishlistToggle, onBuyNow, wishlist = [
                                 </div>
                             </div>
                             <div className={`absolute -right-10 -top-10 w-24 h-24 rounded-full bg-linear-to-br ${category.color} opacity-10 group-hover:opacity-20 transition-opacity duration-300`} />
-                            <div className={`absolute -bottom-8 -left-8 w-16 h-16 rounded-full bg-linear-to-tr ${category.color} opacity-5 group-hover:opacity-10 transition-opacity duration-300`} />
+                            <div className={`absolute -bottom-8 -left-8 w-20 h-20 rounded-full bg-linear-to-tr ${category.color} opacity-5 group-hover:opacity-10 transition-opacity duration-300`} />
                         </motion.button>
                     ))}
+                </div>
+
+                {/* Section Header */}
+                <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 sm:mb-10">
+                    <div>
+                        <div className="flex items-center gap-2 mb-2">
+                            <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 tracking-tight">
+                                Featured Toys
+                            </h2>
+                        </div>
+                        <p className="text-slate-500 text-sm sm:text-base max-w-xl">
+                            Handpicked premium toys that kids absolutely love
+                        </p>
+                    </div>
                 </div>
 
                 {/* Featured Products Carousel */}
@@ -637,14 +650,15 @@ const FeaturedSection = ({ onAddToCart, onWishlistToggle, onBuyNow, wishlist = [
                                                     <span className="text-sm sm:text-lg font-black text-slate-900">₹{discountedPrice}</span>
                                                     {product.discount > 0 && (
                                                         <>
-                                                            <span className="text-[10px] sm:text-sm text-slate-400 line-through">₹{product.price}</span>
+                                                            <span className="text-[10px] sm:text-sm text-slate-400 line-through">
+                                                                ₹{getOriginalPriceForDisplay(product.price, product.discount)}
+                                                            </span>
                                                             <span className="text-[8px] sm:text-xs font-bold text-emerald-600 bg-emerald-50 px-1 sm:px-1.5 py-0.5 rounded">
-                                                                Save ₹{product.price - discountedPrice}
+                                                                Save ₹{getDiscountAmount(product.price, product.discount)}
                                                             </span>
                                                         </>
                                                     )}
                                                 </div>
-
                                                 {/* Compact Quantity Selector - Pill style */}
                                                 <div className="flex items-center gap-1 bg-slate-100 rounded-md px-1.5 py-0.5 shrink-0">
                                                     <button
@@ -718,7 +732,7 @@ const FeaturedSection = ({ onAddToCart, onWishlistToggle, onBuyNow, wishlist = [
                     </AnimatePresence>
 
                     {totalPages > 1 && !isMobile && (
-                        <div className="flex justify-center gap-1.5 mt-6">
+                        <div className="flex justify-center gap-1.5 mt-10">
                             {Array.from({ length: totalPages }).map((_, index) => (
                                 <button
                                     key={index}

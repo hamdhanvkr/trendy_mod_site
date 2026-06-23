@@ -5,6 +5,7 @@ import { ArrowRight, Sparkles, Play, Gift, Star, Target, ShoppingBag, Paintbrush
 const HeroSection = ({ onShopNow, onViewCollection }) => {
 
     const [isHovering, setIsHovering] = useState(false);
+    const [imageError, setImageError] = useState(false);
     const mouseX = useSpring(0, { stiffness: 60, damping: 25 });
     const mouseY = useSpring(0, { stiffness: 60, damping: 25 });
 
@@ -163,17 +164,33 @@ const HeroSection = ({ onShopNow, onViewCollection }) => {
                                         ease: "easeInOut"
                                     }}
                                 >
-                                    <div className="w-full h-full bg-white flex items-center justify-center relative">
-                                        <div className="text-center select-none p-4 z-10">
-                                            <div className="text-[85px] sm:text-[105px] md:text-[120px] drop-shadow-xl animate-bounce [animation-duration:3s] tracking-normal">
-                                                🐼
-                                            </div>
-                                            <div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur-md shadow-sm border border-slate-200/60 px-4 py-1.5 rounded-full inline-flex items-center gap-1.5 whitespace-nowrap transition-all duration-300 hover:border-slate-300">
-                                                <Sparkles className="w-3.5 h-3.5 text-amber-500 fill-amber-500/20" />
-                                                <span className="text-[10px] tracking-widest font-black text-slate-600 uppercase">Featured Toy</span>
-                                            </div>
+                                    <div className="w-full h-full bg-white flex items-center justify-center relative overflow-hidden">
+                                        {/* Dotted Circle Background */}
+                                        <div className="absolute inset-0 flex items-center justify-center">
+                                            <div className="w-[85%] h-[85%] rounded-full border-2 border-dashed border-indigo-300/40 animate-spin-slow" />
                                         </div>
-                                        <div className="absolute inset-6 sm:inset-8 rounded-full border-2 border-dashed border-slate-200/60 pointer-events-none mix-blend-multiply opacity-70 animate-[spin_120s_linear_infinite]" />
+
+                                        {!imageError ? (
+                                            <div className="relative z-10 w-[70%] h-[70%] rounded-full overflow-hidden shadow-lg border-2 border-white/50">
+                                                <img
+                                                    src="/images/panda/panda_1.jpg"
+                                                    alt="Panda toy"
+                                                    className="w-full h-full object-cover"
+                                                    onError={() => setImageError(true)}
+                                                />
+                                            </div>
+                                        ) : (
+                                            <div className="text-center select-none p-4 z-10">
+                                                <div className="text-[85px] sm:text-[105px] md:text-[120px] drop-shadow-xl animate-bounce [animation-duration:3s] tracking-normal">
+                                                    🐼
+                                                </div>
+                                            </div>
+                                        )}
+
+                                        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 bg-white/90 backdrop-blur-md shadow-sm border border-slate-200/60 px-4 py-1.5 rounded-full inline-flex items-center gap-1.5 whitespace-nowrap transition-all duration-300 hover:border-slate-300 z-20">
+                                            <Sparkles className="w-3.5 h-3.5 text-amber-500 fill-amber-500/20" />
+                                            <span className="text-[10px] tracking-widest font-black text-slate-600 uppercase">Featured Toy</span>
+                                        </div>
                                     </div>
                                 </motion.div>
 
