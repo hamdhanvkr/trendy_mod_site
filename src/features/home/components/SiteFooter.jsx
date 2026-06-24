@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { FaInstagram, FaCode, FaWhatsapp, FaYoutube, FaLinkedin, FaGlobe } from 'react-icons/fa';
+import { FaInstagram, FaCode, FaWhatsapp, FaFacebook, FaLinkedin, FaGlobe } from 'react-icons/fa';
 import { MdEmail, MdPhone } from 'react-icons/md';
 import { IoLocationOutline } from 'react-icons/io5';
 
@@ -10,9 +10,9 @@ function SiteFooter() {
     const developers = [
         {
             name: "Mohamed Hamdhan J",
-            role: "Full Stack Developer",
+            role: "Junior Software Engineer",
             portfolio: "https://hamdhan--portfolio.web.app/",
-            linkedin: "https://linkedin.com/in/your-hamdhan-profile"
+            linkedin: "https://www.linkedin.com/in/mohamedhamdhan/"
         },
         {
             name: "Mohamed Jainul Haneef M I",
@@ -64,30 +64,30 @@ function SiteFooter() {
                         <div className="space-y-3.5">
                             <div className="flex items-center gap-3 text-sm text-slate-300 group">
                                 <MdEmail className="text-slate-500 group-hover:text-blue-400 transition-colors text-lg shrink-0" />
-                                <a href="mailto:info@trendymod.com" className="hover:text-blue-400 transition-colors">
-                                    info@trendymod.com
+                                <a href="mailto:trendymod.in@gmail.com" className="hover:text-blue-400 transition-colors">
+                                    trendymod.in@gmail.com
                                 </a>
                             </div>
 
                             <div className="flex items-center gap-3 text-sm text-slate-300 group">
                                 <MdPhone className="text-slate-500 group-hover:text-blue-400 transition-colors text-lg shrink-0" />
-                                <a href="tel:+919876543210" className="hover:text-blue-400 transition-colors">
-                                    +91 98765 43210
+                                <a href="tel:+6381374203" className="hover:text-blue-400 transition-colors">
+                                    +91 6381374203
                                 </a>
                             </div>
 
                             <div className="flex items-center gap-3 text-sm text-slate-300">
                                 <IoLocationOutline className="text-slate-500 text-lg shrink-0" />
-                                <span>Chennai, Tamil Nadu, India</span>
+                                <span>Tiruchirappalli, Tamil Nadu, India</span>
                             </div>
                         </div>
 
                         {/* Social Icons */}
                         <div className="flex flex-wrap gap-4 pt-2">
                             {[
-                                { icon: FaInstagram, color: 'hover:bg-gradient-to-tr hover:from-yellow-500 hover:to-purple-500 hover:text-white', label: 'Instagram', url: 'https://instagram.com' },
-                                { icon: FaYoutube, color: 'hover:bg-red-600 hover:text-white', label: 'YouTube', url: 'https://youtube.com' },
-                                { icon: FaWhatsapp, color: 'hover:bg-green-600 hover:text-white', label: 'WhatsApp', url: 'https://wa.me/919876543210' },
+                                { icon: FaInstagram, color: 'hover:bg-gradient-to-tr hover:from-yellow-500 hover:to-purple-500 hover:text-white', label: 'Instagram', url: 'https://www.instagram.com/trendymod.in?igsh=bTRjemk0aG5sZXpz&utm_source=qr' },
+                                { icon: FaFacebook, color: 'hover:bg-blue-600 hover:text-white', label: 'Facebook', url: 'https://facebook.com' },
+                                { icon: FaWhatsapp, color: 'hover:bg-green-600 hover:text-white', label: 'WhatsApp', url: 'https://wa.me/916381374203' },
                             ].map((social, idx) => (
                                 <motion.a
                                     key={idx}
@@ -152,7 +152,7 @@ function SiteFooter() {
                 {/* Footer Bottom Bar */}
                 <div className="flex flex-col sm:flex-row justify-between items-center gap-4 pt-6 pb-2 text-xs text-slate-500">
                     <div className="font-medium tracking-wide">
-                        © {currentYear} <span className="text-slate-400 font-semibold">Trendy Mod</span>. All rights reserved.
+                        © {currentYear} <span className="text-blue-400 font-semibold">Trendy Mod</span>. All rights reserved.
                     </div>
                     <div className="flex items-center gap-2 bg-slate-900/60 px-3 py-1.5 rounded-lg border border-slate-800 text-slate-400 font-mono">
                         <FaCode className="text-xs text-slate-500" />

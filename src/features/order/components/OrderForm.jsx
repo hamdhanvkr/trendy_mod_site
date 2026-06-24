@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
     X, Send, MapPin, Truck, CheckCircle, User, Phone,
-    Home, Navigation, ShieldCheck, AlertCircle, ArrowLeft
+    Home, Navigation, ShieldCheck, AlertCircle
 } from 'lucide-react';
 
 const OrderForm = ({ isOpen, onClose, cart, total, onOrderComplete }) => {
@@ -142,7 +142,7 @@ const OrderForm = ({ isOpen, onClose, cart, total, onOrderComplete }) => {
         setStatus('sending');
         await new Promise(resolve => setTimeout(resolve, 500));
         const message = generateWhatsAppMessage();
-        const whatsappUrl = `https://wa.me/919629601141?text=${message}`;
+        const whatsappUrl = `https://wa.me/916381374203?text=${message}`;
 
         window.open(whatsappUrl, '_blank');
         setStatus('sent');
@@ -163,7 +163,7 @@ const OrderForm = ({ isOpen, onClose, cart, total, onOrderComplete }) => {
 
     const inputFields = [
         { name: 'name', label: 'Full Name', icon: User, type: 'text', placeholder: 'Enter your full name' },
-        { name: 'phone', label: 'Phone Number', icon: Phone, type: 'tel', placeholder: '9876543210', maxLength: 10 },
+        { name: 'phone', label: 'Phone Number', icon: Phone, type: 'tel', placeholder: '6381374203', maxLength: 10 },
         { name: 'pincode', label: 'Pincode', icon: Navigation, type: 'text', placeholder: '600001', maxLength: 6 },
         { name: 'address', label: 'Delivery Address', icon: Home, type: 'text', placeholder: 'House No., Street name, Area, City' },
         { name: 'landmark', label: 'Landmark (Optional)', icon: MapPin, type: 'text', placeholder: 'Nearby school, shop or landmark' },
