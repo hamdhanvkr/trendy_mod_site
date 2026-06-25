@@ -173,7 +173,7 @@ const HeroSection = ({ onShopNow, onViewCollection }) => {
                                         {!imageError ? (
                                             <div className="relative z-10 w-[70%] h-[70%] rounded-full overflow-hidden shadow-lg border-2 border-white/50">
                                                 <img
-                                                    src="/images/panda/panda_1.jpg"
+                                                    src="/images/panda/Book Panda.jpeg"
                                                     alt="Panda toy"
                                                     className="w-full h-full object-cover"
                                                     onError={() => setImageError(true)}
@@ -222,11 +222,11 @@ const HeroSection = ({ onShopNow, onViewCollection }) => {
                                     <div className="flex flex-col items-center text-center">
                                         <span className="text-[7px] sm:text-[9px] uppercase tracking-widest font-black text-rose-100 opacity-90">Special</span>
                                         <span className="text-[7px] sm:text-[9px] uppercase tracking-widest font-black text-rose-100 opacity-90 -mt-0.5">Offer</span>
-                                        <span className="text-white font-black text-base sm:text-xl mt-1 tracking-tight drop-shadow-sm">Rs. 129</span>
+                                        <span className="text-white font-black text-base sm:text-xl mt-1 tracking-tight drop-shadow-sm">Rs. 99</span>
                                         <div className="relative flex items-center mt-0.5">
-                                            <span className="text-rose-200/70 text-[9px] sm:text-[11px] font-bold line-through decoration-white/50 decoration-2">Rs. 149</span>
+                                            <span className="text-rose-200/70 text-[9px] sm:text-[11px] font-bold line-through decoration-white/50 decoration-2">Rs. 150</span>
                                         </div>
-                                        <div className="mt-1.5 bg-white text-rose-600 text-[8px] sm:text-[9px] font-black px-2 py-0.5 rounded-md shadow-sm tracking-wide">40% OFF</div>
+                                        <div className="mt-1.5 bg-white text-rose-600 text-[8px] sm:text-[9px] font-black px-2 py-0.5 rounded-md shadow-sm tracking-wide">34% OFF</div>
                                     </div>
                                 </motion.div>
                             </div>

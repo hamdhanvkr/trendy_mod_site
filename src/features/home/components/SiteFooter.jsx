@@ -10,7 +10,7 @@ function SiteFooter() {
     const developers = [
         {
             name: "Mohamed Hamdhan J",
-            role: "Junior Software Engineer",
+            role: "Software Engineer",
             portfolio: "https://hamdhan--portfolio.web.app/",
             linkedin: "https://www.linkedin.com/in/mohamedhamdhan/"
         },

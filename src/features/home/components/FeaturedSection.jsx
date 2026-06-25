@@ -15,7 +15,20 @@ import {
     ImageOff,
     Check
 } from 'lucide-react';
-import { getFeaturedProducts, getDiscountedPrice, getOriginalPriceForDisplay, getDiscountAmount } from '../../product/data/products';
+import {
+    getFeaturedProducts,
+    getDiscountedPrice,
+    getOriginalPriceForDisplay,
+    getDiscountAmount,
+    getCategoryDisplayName,
+    getCategoryImage,
+    getCategoryDescription,
+    getCategoryColor,
+    getCategoryBgColor,
+    getCategoryBorderColor,
+    getCategoryHoverColor,
+    getCategoryGradient
+} from '../../product/data/products';
 import { useNavigate } from 'react-router-dom';
 
 const ProductImage = React.memo(({ src, alt }) => {
@@ -156,41 +169,25 @@ const FeaturedSection = ({ onAddToCart, onWishlistToggle, onBuyNow, wishlist = [
     const [isDesktop, setIsDesktop] = useState(true);
     const wishlistSet = useMemo(() => new Set(wishlist), [wishlist]);
 
-    const categories = useMemo(() => [
-        {
-            id: 'panda',
-            name: 'Panda Collection',
-            image: '/Panda.png',
-            description: '14 Cute panda themed toys',
-            color: 'from-emerald-500 to-teal-600',
-            bgColor: 'bg-emerald-50',
-            borderColor: 'border-emerald-200',
-            hoverColor: 'hover:border-emerald-400',
-            gradient: 'from-emerald-50/50 to-teal-50/50'
-        },
-        {
-            id: 'shinchan',
-            name: 'Shinchan Collection',
-            image: '/Shinchan.png',
-            description: 'Funny Shinchan themed toys',
-            color: 'from-blue-500 to-cyan-600',
-            bgColor: 'bg-blue-50',
-            borderColor: 'border-blue-200',
-            hoverColor: 'hover:border-blue-400',
-            gradient: 'from-blue-50/50 to-cyan-50/50'
-        },
-        {
-            id: 'colorchangingpanda',
-            name: 'Color Changing Panda',
-            image: '/Panda.png',
-            description: 'Magic panda that changes color',
-            color: 'from-purple-500 to-pink-600',
-            bgColor: 'bg-purple-50',
-            borderColor: 'border-purple-200',
-            hoverColor: 'hover:border-purple-400',
-            gradient: 'from-purple-50/50 to-pink-50/50'
-        }
-    ], []);
+    const categories = useMemo(() => {
+        const categoryMap = new Map();
+        featuredProducts.forEach(product => {
+            if (!categoryMap.has(product.category)) {
+                categoryMap.set(product.category, {
+                    id: product.category,
+                    name: getCategoryDisplayName(product.category),
+                    image: getCategoryImage(product.category),
+                    description: getCategoryDescription(product.category),
+                    color: getCategoryColor(product.category),
+                    bgColor: getCategoryBgColor(product.category),
+                    borderColor: getCategoryBorderColor(product.category),
+                    hoverColor: getCategoryHoverColor(product.category),
+                    gradient: getCategoryGradient(product.category)
+                });
+            }
+        });
+        return Array.from(categoryMap.values());
+    }, [featuredProducts]);
 
     // Use custom hook for responsive design
     const { itemsPerView, isMobile } = useResponsiveItems(featuredProducts.length);

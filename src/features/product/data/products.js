@@ -427,3 +427,96 @@ export const getOriginalPriceForDisplay = (price, discount) => {
     if (discount === 0) return null;
     return getOriginalPrice(price, discount);
 };
+
+export const getCategoryDisplayName = (categoryId) => {
+    const names = {
+        'panda': 'Panda Collection',
+        'shinchan': 'Shinchan Collection',
+        'colorchangingpanda': 'Magic Pandas',
+        'keychain': 'Keychain Collection'
+    };
+    return names[categoryId] || categoryId.charAt(0).toUpperCase() + categoryId.slice(1) + ' Collection';
+};
+
+export const getCategoryIcon = (categoryId) => {
+    const icons = {
+        'panda': 'Sparkles',
+        'shinchan': 'Monitor',
+        'colorchangingpanda': 'Palette',
+        'keychain': 'Layers'
+    };
+    return icons[categoryId] || 'Layers';
+};
+
+export const getCategoryTag = (categoryId) => {
+    const tags = {
+        'panda': 'Signature',
+        'shinchan': 'Limited',
+        'colorchangingpanda': 'Trending',
+        'keychain': 'New'
+    };
+    return tags[categoryId] || 'Popular';
+};
+
+export const getCategoryImage = (categoryId) => {
+    const images = {
+            'panda': '/images/panda/Belly Dance Panda Toy.jpeg',
+            'shinchan': '/images/shinchan/Shinchan Mobile Stand ( Green ).jpeg',
+            'keychain': '/images/keychain/Red Keychain.jpeg'
+        };
+        return images[categoryId] || '/default-category.png';
+};
+
+export const getCategoryDescription = (categoryId) => {
+    const descriptions = {
+        'panda': '14 Cute panda themed toys',
+        'shinchan': 'Funny Shinchan themed toys',
+        'keychain': 'Stylish keychain collection'
+    };
+    return descriptions[categoryId] || `${categoryId} collection`;
+};
+
+export const getCategoryColor = (categoryId) => {
+    const colors = {
+        'panda': 'from-emerald-500 to-teal-600',
+        'shinchan': 'from-blue-500 to-cyan-600',
+        'keychain': 'from-orange-500 to-amber-600'
+    };
+    return colors[categoryId] || 'from-gray-500 to-slate-600';
+};
+
+export const getCategoryBgColor = (categoryId) => {
+    const colors = {
+        'panda': 'bg-emerald-50',
+        'shinchan': 'bg-blue-50',
+        'keychain': 'bg-orange-50'
+    };
+    return colors[categoryId] || 'bg-gray-50';
+};
+
+export const getCategoryBorderColor = (categoryId) => {
+    const colors = {
+        'panda': 'border-emerald-200',
+        'shinchan': 'border-blue-200',
+        'keychain': 'border-orange-200'
+    };
+    return colors[categoryId] || 'border-gray-200';
+};
+
+export const getCategoryHoverColor = (categoryId) => {
+    const colors = {
+        'panda': 'hover:border-emerald-400',
+        'shinchan': 'hover:border-blue-400',
+        'keychain': 'hover:border-orange-400'
+    };
+    return colors[categoryId] || 'hover:border-gray-400';
+};
+
+export const getCategoryGradient = (categoryId) => {
+    const gradients = {
+        'panda': 'from-emerald-50/50 to-teal-50/50',
+        'shinchan': 'from-blue-50/50 to-cyan-50/50',
+        'keychain': 'from-orange-50/50 to-amber-50/50'
+    };
+    return gradients[categoryId] || 'from-gray-50/50 to-slate-50/50';
+};

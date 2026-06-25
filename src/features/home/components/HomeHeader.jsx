@@ -3,36 +3,40 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import TrendyLogo from '/TrendyLogo.png';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ShoppingBag, Grid, Sparkles, Palette, Monitor, Layers, Heart, Home, Search, ChevronDown, X, MessageCircle, Package } from 'lucide-react';
-
-const CATEGORIES = [
-    {
-        id: 'panda',
-        name: 'Panda Collection',
-        icon: 'Sparkles',
-        count: 14,
-        tag: 'Signature',
-    },
-    {
-        id: 'colorchangingpanda',
-        name: 'Magic Pandas',
-        icon: 'Palette',
-        count: 3,
-        tag: 'Trending',
-    },
-    {
-        id: 'shinchan',
-        name: 'Shinchan Stands',
-        icon: 'Monitor',
-        count: 3,
-        tag: 'Limited',
-    },
-];
+import { products, getCategoryDisplayName, getCategoryIcon, getCategoryTag } from '@/features/product/data/products';
 
 const ICON_MAP = {
     Sparkles: <Sparkles size={16} />,
     Palette: <Palette size={16} />,
     Monitor: <Monitor size={16} />,
-    Layers: <Layers size={16} />
+    Layers: <Layers size={16} />,
+    Home: <Home size={16} />,
+    Package: <Package size={16} />,
+    Heart: <Heart size={16} />
+};
+
+const getIconComponent = (iconName) => {
+    return ICON_MAP[iconName] || <Layers size={16} />;
+};
+
+const getDynamicCategories = () => {
+    const categoryMap = new Map();
+    products.forEach(product => {
+        const categoryId = product.category;
+        if (!categoryMap.has(categoryId)) {
+            categoryMap.set(categoryId, {
+                id: categoryId,
+                name: getCategoryDisplayName(categoryId),
+                icon: getCategoryIcon(categoryId),
+                count: 0,
+                tag: getCategoryTag(categoryId),
+                iconComponent: getIconComponent(getCategoryIcon(categoryId))
+            });
+        }
+        const cat = categoryMap.get(categoryId);
+        cat.count += 1;
+    });
+    return Array.from(categoryMap.values()).sort((a, b) => b.count - a.count);
 };
 
 const CategoryList = ({ categories, onCategoryClick }) => (
@@ -49,11 +53,11 @@ const CategoryList = ({ categories, onCategoryClick }) => (
             >
                 <div className="flex items-center gap-3">
                     <span className="text-slate-400 w-5 h-5 flex items-center justify-center">
-                        {ICON_MAP[cat.icon]}
+                        {cat.iconComponent}
                     </span>
                     <div>
                         <div className="text-xs font-medium text-slate-700">{cat.name}</div>
-                        <div className="text-[11px] text-slate-400">{cat.count} Artifacts</div>
+                        <div className="text-[11px] text-slate-400">{cat.count} Products</div>
                     </div>
                 </div>
                 <span className="text-[10px] font-medium px-1.5 py-0.5 rounded bg-slate-100 text-slate-600 uppercase tracking-wide">
@@ -81,6 +85,9 @@ const HomeHeader = ({
     const [isScrolled, setIsScrolled] = useState(false);
     const [showCategoriesDropdown, setShowCategoriesDropdown] = useState(false);
     const [showMobileDrawer, setShowMobileDrawer] = useState(false);
+
+    // Generate dynamic categories
+    const dynamicCategories = useMemo(() => getDynamicCategories(), []);
 
     const activeTab = useMemo(() => {
         const path = location.pathname;
@@ -244,7 +251,7 @@ const HomeHeader = ({
                                                 role="menu"
                                             >
                                                 <CategoryList
-                                                    categories={CATEGORIES}
+                                                    categories={dynamicCategories}
                                                     onCategoryClick={handleCategoryClick}
                                                 />
                                             </motion.div>
@@ -355,7 +362,7 @@ const HomeHeader = ({
                                 </button>
                             </div>
                             <CategoryList
-                                categories={CATEGORIES}
+                                categories={dynamicCategories}
                                 onCategoryClick={handleCategoryClick}
                             />
                             <div className="mt-4 pt-4 border-t border-slate-200">
