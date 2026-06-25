@@ -15,10 +15,3 @@ export const SORT_OPTIONS = [
     { value: 'newest', label: 'Newest First' },
     { value: 'discount', label: 'Biggest Discount' }
 ];
-
-export const CATEGORY_NAMES = {
-    'panda': 'Panda Collection',
-    'colorchangingpanda': 'Color Changing Panda',
-    'shinchan': 'Shinchan Collection',
-    'all': 'All Products'
-};

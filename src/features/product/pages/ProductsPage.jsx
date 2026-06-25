@@ -12,7 +12,7 @@ import {
     Check
 } from 'lucide-react';
 
-import { products, getProductsByCategory, getDiscountedPrice } from '../data/products';
+import { products, getProductsByCategory, getDiscountedPrice, getCategoryDisplayName } from '../data/products';
 import { HomeHeader, SiteFooter } from '@/features/home/components';
 import WishlistDrawer from '@/features/wishlist/components/WishlistDrawer';
 import CartDrawer from '@/features/cart/components/CartDrawer';
@@ -32,7 +32,6 @@ import {
     VIEW_MODES,
     SORT_OPTIONS,
     ITEMS_PER_PAGE,
-    CATEGORY_NAMES
 } from '../constants';
 
 const ProductsPage = () => {
@@ -177,9 +176,10 @@ const ProductsPage = () => {
                 let productList;
                 if (categoryId && categoryId !== 'all') {
                     productList = getProductsByCategory(categoryId);
+                    const displayName = getCategoryDisplayName(categoryId);
                     dispatch({
                         type: 'SET_CATEGORY_NAME',
-                        payload: CATEGORY_NAMES[categoryId] || 'Products'
+                        payload: displayName
                     });
                 } else {
                     productList = products;
