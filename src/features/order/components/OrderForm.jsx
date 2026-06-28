@@ -76,9 +76,9 @@ const OrderForm = ({ isOpen, onClose, cart, total, onOrderComplete }) => {
 
         let message = "TRENDY MOD TOYS - NEW ORDER\n\n";
 
-        message += "ORDER DATE : " + orderDate + "\n\n";
+        message += "*ORDER DATE :* " + orderDate + "\n\n";
         message += "===============================\n";
-        message += "CUSTOMER DETAILS\n";
+        message += "*CUSTOMER DETAILS*\n";
         message += "===============================\n";
         message += "Name      : " + formData.name + "\n";
         message += "Phone     : " + formData.phone + "\n";
@@ -91,7 +91,7 @@ const OrderForm = ({ isOpen, onClose, cart, total, onOrderComplete }) => {
                 : "Outside Tamil Nadu") +
             "\n\n";
         message += "===============================\n";
-        message += "ORDER ITEMS\n";
+        message += "*ORDER ITEMS*\n";
         message += "===============================\n";
 
         cart.forEach((item, idx) => {
@@ -102,7 +102,7 @@ const OrderForm = ({ isOpen, onClose, cart, total, onOrderComplete }) => {
         });
 
         message += "===============================\n";
-        message += "ORDER SUMMARY\n";
+        message += "*ORDER SUMMARY*\n";
         message += "===============================\n";
         message += "Subtotal      : ₹" + subtotal + "\n";
 
@@ -112,15 +112,15 @@ const OrderForm = ({ isOpen, onClose, cart, total, onOrderComplete }) => {
             message += "Delivery Fee  : ₹" + deliveryCharge + "\n";
         }
 
-        message += "Total Items   : " + totalItems + "\n";
-        message += "Grand Total   : ₹" + grandTotal + "\n\n";
+        message += "Total Items   : " + totalItems + "\n\n";
+        message += "*Grand Total*   : ₹" + grandTotal + "\n\n";
 
-        if (formData.instructions) {
-            message += "===============================\n";
-            message += "SPECIAL INSTRUCTIONS\n";
-            message += "===============================\n";
-            message += formData.instructions + "\n\n";
-        }
+        // if (formData.instructions) {
+        //     message += "===============================\n";
+        //     message += "SPECIAL INSTRUCTIONS\n";
+        //     message += "===============================\n";
+        //     message += formData.instructions + "\n\n";
+        // }
 
         message += "===============================\n";
         message += "Thank you for shopping with TrendyMod Toys.\n";
@@ -282,7 +282,7 @@ const OrderForm = ({ isOpen, onClose, cart, total, onOrderComplete }) => {
                                                     className="w-full h-10 pl-9 pr-8 bg-white border border-slate-200 focus:border-blue-500 rounded-xl text-xs sm:text-sm text-slate-800 focus:outline-none transition-all shadow-sm shadow-slate-100/50 appearance-none cursor-pointer"
                                                 >
                                                     <option value="tamilnadu">Tamil Nadu Region (Standard : ₹50)</option>
-                                                    <option value="outside">Domestic - Rest of India (Standard : ₹80)</option>
+                                                    <option value="outside">Domestic - Out of Tamil Nadu (Standard : ₹80)</option>
                                                 </select>
                                                 <MapPin className="absolute left-3 text-slate-400 pointer-events-none" size={15} />
                                                 <div className="absolute right-3 pointer-events-none text-slate-400">

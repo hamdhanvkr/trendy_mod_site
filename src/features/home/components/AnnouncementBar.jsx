@@ -7,22 +7,23 @@ const AnnouncementBar = () => {
     const [isVisible, setIsVisible] = useState(true);
 
     const announcements = [
+       
         {
-            text: "FREE GIFT WRAPPING ON ALL TOYS!",
-            icon: <Sparkles size={14} className="text-blue-100 fill-blue-100/20 animate-pulse" />
-        },
-        {
-            text: "Fast Toy Delivery (2-3 Working Days)",
+            text: "Free Shipping On Purchase Above 1000Rs",
             icon: <Truck size={14} className="text-blue-100" />
         },
         {
-            text: "Free Shipping on Orders Above ₹1000",
+            text: "No Cash On Delivery | Deliver in 2 - 3 Working Days",
             icon: <PartyPopper size={14} className="text-blue-100" />
         },
-        {
-            text: "Prepaid Orders Only (Super Safe Checkout)",
-            icon: <Coins size={14} className="text-blue-100" />
-        }
+         {
+            text: "Super Safe And Fast Delivery",
+            icon: <Sparkles size={14} className="text-blue-100 fill-blue-100/20 animate-pulse" />
+        },
+        // {
+        //     text: "Prepaid Orders Only (Super Safe Checkout)",
+        //     icon: <Coins size={14} className="text-blue-100" />
+        // }
     ];
 
     return (

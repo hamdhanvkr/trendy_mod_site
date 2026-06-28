@@ -230,7 +230,7 @@ const CartDrawer = ({ isOpen, onClose, cart, setCart }) => {
                                         {/* Footer - Part of scroll flow, not fixed */}
                                         <div className="border-t border-slate-100 pt-4 sm:pt-5 mt-2">
                                             <div className="space-y-2 mb-4">
-                                                <div className="flex justify-between text-xs font-semibold text-slate-500">
+                                                {/* <div className="flex justify-between text-xs font-semibold text-slate-500">
                                                     <span>Subtotal ({totalItems} items)</span>
                                                     <span className="text-slate-900">₹{subtotal}</span>
                                                 </div>
@@ -239,11 +239,11 @@ const CartDrawer = ({ isOpen, onClose, cart, setCart }) => {
                                                     <span className={isFreeDelivery ? "text-blue-600 font-bold" : "text-slate-900"}>
                                                         {isFreeDelivery ? "₹0" : `₹${deliveryCharge}`}
                                                     </span>
-                                                </div>
+                                                </div> */}
                                                 <div className="border-t border-slate-200/60 pt-2.5 mt-1">
                                                     <div className="flex justify-between items-baseline">
-                                                        <span className="text-xs sm:text-sm font-bold text-slate-900">Total Bill</span>
-                                                        <span className="text-lg sm:text-xl font-black text-blue-600">₹{total}</span>
+                                                        <span className="text-xs sm:text-sm font-bold text-slate-900">Sub Total Bill</span>
+                                                        <span className="text-lg sm:text-xl font-black text-blue-600">₹{subtotal}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -275,7 +275,7 @@ const CartDrawer = ({ isOpen, onClose, cart, setCart }) => {
                 isOpen={showOrderForm}
                 onClose={() => setShowOrderForm(false)}
                 cart={cart}
-                total={total}
+                total={subtotal}
                 onOrderComplete={() => {
                     setShowOrderForm(false);
                     onClose();

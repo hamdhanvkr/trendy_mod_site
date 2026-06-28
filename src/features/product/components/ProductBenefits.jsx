@@ -6,7 +6,7 @@ export const ProductBenefits = React.memo(() => {
     const benefits = [
         {
             icon: Truck,
-            label: 'Free Shipping',
+            label: 'Shipping',
             subLabel: 'On all orders',
             color: 'blue',
             bgClass: 'bg-blue-50/50',
@@ -36,8 +36,8 @@ export const ProductBenefits = React.memo(() => {
         },
         {
             icon: RotateCcw,
-            label: 'Easy Returns',
-            subLabel: '7-day policy',
+            label: 'Free Delivery',
+            subLabel: 'Order on above 1000',
             color: 'purple',
             bgClass: 'bg-purple-50/50',
             borderClass: 'border-purple-100/50',
