@@ -13,9 +13,11 @@ import {
     ChevronRight,
     AlertCircle,
     ImageOff,
-    Check
+    Check,
+    Sparkles
 } from 'lucide-react';
 import {
+    products,
     getFeaturedProducts,
     getDiscountedPrice,
     getOriginalPriceForDisplay,
@@ -170,24 +172,28 @@ const FeaturedSection = ({ onAddToCart, onWishlistToggle, onBuyNow, wishlist = [
     const wishlistSet = useMemo(() => new Set(wishlist), [wishlist]);
 
     const categories = useMemo(() => {
-        const categoryMap = new Map();
-        featuredProducts.forEach(product => {
-            if (!categoryMap.has(product.category)) {
-                categoryMap.set(product.category, {
-                    id: product.category,
-                    name: getCategoryDisplayName(product.category),
-                    image: getCategoryImage(product.category),
-                    description: getCategoryDescription(product.category),
-                    color: getCategoryColor(product.category),
-                    bgColor: getCategoryBgColor(product.category),
-                    borderColor: getCategoryBorderColor(product.category),
-                    hoverColor: getCategoryHoverColor(product.category),
-                    gradient: getCategoryGradient(product.category)
-                });
-            }
+        const uniqueCategories = [...new Set(products.map(p => p.category))];
+        return uniqueCategories.map(categoryId => {
+            const productsInCategory = products.filter(p => p.category === categoryId);
+            const featuredProductsInCategory = products.filter(p => p.category === categoryId && p.isFeatured === true);
+            return {
+                id: categoryId,
+                name: getCategoryDisplayName(categoryId),
+                image: getCategoryImage(categoryId),
+                description: getCategoryDescription(categoryId),
+                color: getCategoryColor(categoryId),
+                bgColor: getCategoryBgColor(categoryId),
+                borderColor: getCategoryBorderColor(categoryId),
+                hoverColor: getCategoryHoverColor(categoryId),
+                gradient: getCategoryGradient(categoryId),
+                itemCount: productsInCategory.length,
+                isPopular: featuredProductsInCategory.some(p => p.isPopular),
+                isNew: featuredProductsInCategory.some(p => p.isNew),
+                ageRange: 'All Ages',
+                subDescription: `${productsInCategory.length} products`
+            };
         });
-        return Array.from(categoryMap.values());
-    }, [featuredProducts]);
+    }, []);
 
     // Use custom hook for responsive design
     const { itemsPerView, isMobile } = useResponsiveItems(featuredProducts.length);
@@ -292,6 +298,18 @@ const FeaturedSection = ({ onAddToCart, onWishlistToggle, onBuyNow, wishlist = [
         const nextIndex = (currentIndex + 1) % totalPages;
         setCurrentIndex(nextIndex);
     }, [currentIndex, totalPages]);
+
+    // Auto-play carousel on desktop
+    useEffect(() => {
+        if (isMobile) return;
+        if (isHovering) return;
+        if (totalPages <= 1) return;
+        const interval = setInterval(() => {
+            nextSlide();
+        }, 4000);
+
+        return () => clearInterval(interval);
+    }, [isMobile, isHovering, totalPages, nextSlide]);
 
     const prevSlide = useCallback(() => {
         if (totalPages === 0) return;
@@ -467,37 +485,106 @@ const FeaturedSection = ({ onAddToCart, onWishlistToggle, onBuyNow, wishlist = [
                 </div>
 
                 {/* Category Cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-5 mb-10 sm:mb-12">
-                    {categories.map((category, index) => (
-                        <motion.button
-                            key={category.id}
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ delay: index * 0.1, type: 'spring', stiffness: 300 }}
-                            whileHover={{ scale: 1.02, y: -2 }}
-                            whileTap={{ scale: 0.98 }}
-                            onClick={() => handleCategoryClick(category.id)}
-                            className={`group relative p-4 sm:p-5 rounded-2xl border-2 ${category.borderColor} ${category.bgColor} ${category.hoverColor} hover:shadow-lg transition-all duration-300 text-left overflow-hidden`}
-                        >
-                            <div className="relative z-10 flex items-start gap-4">
-                                <div className="shrink-0 w-16 h-16 sm:w-20 sm:h-20 rounded-xl overflow-hidden shadow-sm transform transition-transform group-hover:scale-110 group-hover:rotate-6 border-0">
-                                    <CategoryImage src={category.image} alt={category.name} />
-                                </div>
-                                <div className="flex-1">
-                                    <h3 className="text-base sm:text-lg font-bold text-slate-800 group-hover:text-blue-600 transition-colors">
-                                        {category.name}
-                                    </h3>
-                                    <p className="text-xs sm:text-sm text-slate-500 mt-1">{category.description}</p>
-                                    <div className="mt-2 inline-flex items-center gap-1 text-xs font-semibold text-blue-600 group-hover:gap-2 transition-all">
-                                        <span>Browse Collection</span>
-                                        <ArrowRight className="w-3 h-3" aria-hidden="true" />
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mb-14 lg:mb-20">
+                    {categories.map((category, index) => {
+                        const gradient = getCategoryColor(category.id);
+                        const bgColor = getCategoryBgColor(category.id);
+                        const borderColor = getCategoryBorderColor(category.id);
+
+                        return (
+                            <motion.div
+                                key={category.id}
+                                initial={{ opacity: 0, y: 20 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: index * 0.05, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+                                whileHover={{ y: -6 }}
+                                className="relative group cursor-pointer"
+                                onClick={() => handleCategoryClick(category.id)}
+                            >
+                                {/* Main Card Wrapper */}
+                                <div className={`relative rounded-2xl overflow-hidden bg-white border ${borderColor} shadow-sm transition-all duration-500 group-hover:shadow-xl group-hover:shadow-slate-200/40`}>
+
+                                    {/* Hero Image Section Frame */}
+                                    <div className="relative h-80 lg:h-96 w-full overflow-hidden">
+                                        <CategoryImage
+                                            src={category.image}
+                                            alt={category.name}
+                                            className="w-full h-full object-contain transition-transform duration-700 ease-out group-hover:scale-105"
+                                            width="100%"
+                                            height="100%"
+                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                        />
+
+                                        {/* Subtle Global Image Shading overlays */}
+                                        <div className="absolute inset-0 bg-linear-to-t from-slate-950/80 via-slate-950/5 to-transparent" />
+
+                                        {/* Top-Right Promotional Badges - Refined */}
+                                        <div className="absolute top-4 right-4 flex flex-col items-end gap-2 z-20">
+                                            {category.isPopular && (
+                                                <span className={`px-3 py-1 text-[10px] font-bold uppercase tracking-wider bg-linear-to-r ${gradient} text-white rounded-full shadow-lg shadow-orange-500/20 flex items-center gap-1 backdrop-blur-sm`}>
+                                                    <Sparkles className="w-3 h-3" />
+                                                    Trending
+                                                </span>
+                                            )}
+                                            {category.isNew && (
+                                                <span className={`px-3 py-1 text-[10px] font-bold uppercase tracking-wider bg-linear-to-r ${gradient} text-white rounded-full shadow-lg shadow-emerald-500/20 backdrop-blur-sm`}>
+                                                    New Arrival
+                                                </span>
+                                            )}
+                                        </div>
+
+                                        {/* FLOATING INNER OVERLAY CONTENT SYSTEM */}
+                                        <div className="absolute bottom-4 left-4 right-4 z-20 space-y-3">
+                                            {/* Category Headings */}
+                                            <div className="px-1 text-white drop-shadow-[0_2px_8px_rgba(15,23,42,0.35)]">
+                                                <h3 className="text-2xl font-bold tracking-tight">
+                                                    {category.name}
+                                                </h3>
+                                                <div className="flex items-center gap-2 mt-0.5">
+                                                    <p className="text-white/80 text-xs font-medium tracking-wide">
+                                                        {category.itemCount} Products
+                                                    </p>
+                                                    <span className="w-1 h-1 rounded-full bg-white/40" />
+                                                    <p className="text-white/60 text-[10px] font-medium uppercase tracking-wide">
+                                                        {category.ageRange || 'All Ages'}
+                                                    </p>
+                                                </div>
+                                            </div>
+
+                                            {/* DYNAMIC FOOTER POD - Kept your gradients */}
+                                            <div className={`relative overflow-hidden p-4 rounded-xl flex items-center justify-between gap-6 ${bgColor} border ${borderColor} backdrop-blur-md shadow-lg shadow-slate-950/5 transition-all duration-300 group-hover:shadow-xl`}>
+
+                                                {/* Your Custom Color Blobs */}
+                                                <div className={`absolute -right-10 -top-10 w-20 h-20 rounded-full bg-linear-to-br ${category.color || gradient} opacity-10 group-hover:opacity-20 transition-opacity duration-300 pointer-events-none z-0`} />
+                                                <div className={`absolute -bottom-10 -left-10 w-20 h-20 rounded-full bg-linear-to-tr ${category.color || gradient} opacity-5 group-hover:opacity-10 transition-opacity duration-300 pointer-events-none z-0`} />
+
+                                                {/* Left Typography Field */}
+                                                <div className="space-y-0.5 flex-1 min-w-0 text-left z-10">
+                                                    <span className="text-[9px] font-bold uppercase tracking-wider text-slate-500/80 block">
+                                                        Overview
+                                                    </span>
+                                                    <p className="text-sm text-slate-800 font-semibold line-clamp-1">
+                                                        {category.description}
+                                                    </p>
+                                                </div>
+
+                                                {/* Rectangular Button with Browse text and Arrow */}
+                                                <div className="shrink-0 z-10">
+                                                    <div className={`flex items-center gap-2 px-4 py-2 rounded-lg bg-linear-to-r ${gradient} text-white text-xs font-bold uppercase tracking-wider transition-all duration-300 group-hover:scale-105 group-hover:shadow-lg group-hover:shadow-${category.color || 'slate'}-500/30`}>
+                                                        <span>Browse</span>
+                                                        <ArrowRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-0.5" />
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div className={`absolute -right-10 -top-10 w-24 h-24 rounded-full bg-linear-to-br ${category.color} opacity-10 group-hover:opacity-20 transition-opacity duration-300`} />
-                            <div className={`absolute -bottom-8 -left-8 w-20 h-20 rounded-full bg-linear-to-tr ${category.color} opacity-5 group-hover:opacity-10 transition-opacity duration-300`} />
-                        </motion.button>
-                    ))}
+
+                                {/* Micro-ambient layout background glow */}
+                                <div className={`absolute -z-10 -bottom-4 right-4 w-24 h-24 rounded-full bg-linear-to-br ${gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500 blur-xl`} />
+                            </motion.div>
+                        );
+                    })}
                 </div>
 
                 {/* Section Header */}

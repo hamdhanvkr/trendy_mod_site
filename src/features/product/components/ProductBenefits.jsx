@@ -47,7 +47,7 @@ export const ProductBenefits = React.memo(() => {
     ];
 
     return (
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-4 border-t border-slate-200/80">
+        <div className="grid mt-2 grid-cols-2 sm:grid-cols-4 gap-4 pt-6 border-t border-slate-200/80">
             {benefits.map(({ icon: Icon, label, subLabel, bgClass, borderClass, hoverClass, textClass }) => (
                 <div
                     key={label}

@@ -260,16 +260,16 @@ function HomePage() {
                 onWishlistClose={handleWishlistClose}
             />
 
-            <HeroSection
-                onShopNow={handleCartOpen}
-                onViewCollection={handleViewAllProducts}
-            />
-
             <FeaturedSection
                 onAddToCart={handleAddToCart}
                 onBuyNow={handleBuyNow}
                 onWishlistToggle={handleWishlistToggle}
                 wishlist={wishlist}
+            />
+
+            <HeroSection
+                onShopNow={handleCartOpen}
+                onViewCollection={handleViewAllProducts}
             />
 
             <PromoBanner

@@ -468,8 +468,6 @@ const ProductsPage = () => {
                             </button>
                         </div>
                     </div>
-
-                    {/* Mobile Filter Section */}
                 </div>
             </div>
 

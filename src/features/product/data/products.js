@@ -642,7 +642,7 @@ export const getCategoryImage = (categoryId) => {
 
 export const getCategoryDescription = (categoryId) => {
     const descriptions = {
-        'panda': '14 Cute panda themed toys',
+        'panda': 'Cute panda themed toys',
         'shinchan': 'Funny shinchan themed toys',
         'keychain': 'Stylish keychain collection',
         'handmade': 'Handmade themed croshet',
@@ -656,7 +656,7 @@ export const getCategoryColor = (categoryId) => {
         'panda': 'from-emerald-500 to-teal-600',
         'shinchan': 'from-blue-500 to-cyan-600',
         'keychain': 'from-orange-500 to-amber-600',
-         'handmade': 'from-pink-500 to-rose-600',
+        'handmade': 'from-pink-500 to-rose-600',
         'toys': 'from-violet-500 to-purple-600'
     };
     return colors[categoryId] || 'from-gray-500 to-slate-600';
