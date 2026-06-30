@@ -77,9 +77,9 @@ const OrderForm = ({ isOpen, onClose, cart, total, onOrderComplete }) => {
         let message = "TRENDY MOD TOYS - NEW ORDER\n\n";
         message += "*ORDER DATE :* " + orderDate + "\n\n";
 
-        message += "===============================\n";
+        message += "===========================\n";
         message += "*CUSTOMER DETAILS*\n";
-        message += "===============================\n";
+        message += "===========================\n";
 
         // Use dashes/bullets instead of trying to align with spaces
         message += "• Name      : " + formData.name + "\n";
@@ -90,9 +90,9 @@ const OrderForm = ({ isOpen, onClose, cart, total, onOrderComplete }) => {
         message += "• Region    : " +
             (formData.location === "tamilnadu" ? "Tamil Nadu" : "Outside Tamil Nadu") + "\n\n";
 
-        message += "===============================\n";
+        message += "===========================\n";
         message += "*ORDER ITEMS*\n";
-        message += "===============================\n";
+        message += "===========================\n";
 
         cart.forEach((item, idx) => {
             message += `${idx + 1}. ${item.name}\n`;
@@ -101,15 +101,15 @@ const OrderForm = ({ isOpen, onClose, cart, total, onOrderComplete }) => {
             message += `   • Total  : ₹${item.price * item.quantity}\n\n`;
         });
 
-        message += "===============================\n";
+        message += "===========================\n";
         message += "*ORDER SUMMARY*\n";
-        message += "===============================\n";
+        message += "===========================\n";
         message += "• Total Items  : " + totalItems + "\n";
         message += "• Sub Total    : ₹" + subtotal + "\n";
         message += "• Delivery Fee : " + (isFreeDelivery ? "FREE" : "₹" + deliveryCharge) + "\n";
         message += "• Grand Total  : ₹" + grandTotal + "\n\n";
 
-        message += "===============================\n";
+        message += "===========================\n";
         message += "Thank you for shopping with TrendyMod Toys.\n";
         message += "We will contact you shortly to confirm your order.";
 
