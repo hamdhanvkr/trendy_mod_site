@@ -85,7 +85,7 @@ const CategoryImage = React.memo(({ src, alt }) => {
     const [error, setError] = useState(false);
 
     return (
-        <div className="w-full h-full rounded-xl overflow-hidden">
+        <div className="w-full h-full rounded-lg overflow-hidden">
             {!error ? (
                 <img
                     src={src}
@@ -462,7 +462,7 @@ const FeaturedSection = ({ onAddToCart, onWishlistToggle, onBuyNow, wishlist = [
         <section className="py-4 sm:py-6 lg:py-8 bg-linear-to-b from-white via-slate-50/50 to-white">
             <div className="container mx-auto px-4 sm:px-6 lg:px-8" ref={containerRef}>
 
-                <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-8 sm:mb-10">
+                <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-4 sm:mb-10">
                     <div>
                         <div className="flex items-center gap-2 mb-2">
                             <h2 className="text-2xl sm:text-3xl md:text-4xl font-black text-slate-900 tracking-tight">
@@ -485,12 +485,11 @@ const FeaturedSection = ({ onAddToCart, onWishlistToggle, onBuyNow, wishlist = [
                 </div>
 
                 {/* Category Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 lg:gap-8 mb-14 lg:mb-20">
+                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 lg:gap-8 mb-8 lg:mb-">
                     {categories.map((category, index) => {
                         const gradient = getCategoryColor(category.id);
                         const bgColor = getCategoryBgColor(category.id);
                         const borderColor = getCategoryBorderColor(category.id);
-
                         return (
                             <motion.div
                                 key={category.id}
@@ -498,90 +497,82 @@ const FeaturedSection = ({ onAddToCart, onWishlistToggle, onBuyNow, wishlist = [
                                 animate={{ opacity: 1, y: 0 }}
                                 transition={{ delay: index * 0.05, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                                 whileHover={{ y: -6 }}
-                                className="relative group cursor-pointer"
+                                className="relative group cursor-pointer flex flex-col h-full"
                                 onClick={() => handleCategoryClick(category.id)}
                             >
-                                {/* Main Card Wrapper */}
-                                <div className={`relative rounded-2xl overflow-hidden bg-white border ${borderColor} shadow-sm transition-all duration-500 group-hover:shadow-xl group-hover:shadow-slate-200/40`}>
+                                {/* Main Card Wrapper - Borders removed here to prevent collision */}
+                                <div className="relative flex flex-col h-full rounded-lg overflow-hidden bg-transparent transition-all duration-500 group-hover:shadow-xl group-hover:shadow-slate-200/50">
 
-                                    {/* Hero Image Section Frame */}
-                                    <div className="relative h-80 lg:h-96 w-full overflow-hidden">
+                                    {/* Hero Image Section Frame - Added border here */}
+                                    <div className={`relative aspect-square sm:aspect-4/3 w-full  border-t border-x ${borderColor} overflow-hidden shrink-0`}>
                                         <CategoryImage
                                             src={category.image}
                                             alt={category.name}
-                                            className="w-full h-full object-contain transition-transform duration-700 ease-out group-hover:scale-105"
+                                            className="w-full h-full object-contain p-4 transition-transform duration-700 ease-out group-hover:scale-105"
                                             width="100%"
                                             height="100%"
-                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                            sizes="(max-width: 640px) 50vw, (max-width: 1024px) 33vw, 25vw"
                                         />
 
-                                        {/* Subtle Global Image Shading overlays */}
-                                        <div className="absolute inset-0 bg-linear-to-t from-slate-950/80 via-slate-950/5 to-transparent" />
+                                        {/* High-Contrast Vignette Gradient for Text Readability */}
+                                        <div className="absolute inset-0 bg-linear-to-t from-slate-950/90 via-slate-950/40 to-transparent pointer-events-none" />
 
-                                        {/* Top-Right Promotional Badges - Refined */}
-                                        <div className="absolute top-4 right-4 flex flex-col items-end gap-2 z-20">
+                                        {/* Top-Right Promotional Badges */}
+                                        <div className="absolute top-2 right-2 md:top-3 md:right-3 flex flex-col items-end gap-1.5 z-20">
                                             {category.isPopular && (
-                                                <span className={`px-3 py-1 text-[10px] font-bold uppercase tracking-wider bg-linear-to-r ${gradient} text-white rounded-full shadow-lg shadow-orange-500/20 flex items-center gap-1 backdrop-blur-sm`}>
-                                                    <Sparkles className="w-3 h-3" />
+                                                <span className={`px-2 py-0.5 md:px-2.5 md:py-1 text-[9px] md:text-[10px] font-bold uppercase tracking-wider bg-linear-to-r ${gradient} text-white rounded-full shadow-md shadow-orange-500/10 flex items-center gap-1 backdrop-blur-xs`}>
+                                                    <Sparkles className="w-2.5 h-2.5 md:w-3 md:h-3" />
                                                     Trending
                                                 </span>
                                             )}
                                             {category.isNew && (
-                                                <span className={`px-3 py-1 text-[10px] font-bold uppercase tracking-wider bg-linear-to-r ${gradient} text-white rounded-full shadow-lg shadow-emerald-500/20 backdrop-blur-sm`}>
+                                                <span className={`px-2 py-0.5 md:px-2.5 md:py-1 text-[9px] md:text-[10px] font-bold uppercase tracking-wider bg-linear-to-r ${gradient} text-white rounded-full shadow-md shadow-emerald-500/10 backdrop-blur-xs`}>
                                                     New Arrival
                                                 </span>
                                             )}
                                         </div>
 
-                                        {/* FLOATING INNER OVERLAY CONTENT SYSTEM */}
-                                        <div className="absolute bottom-4 left-4 right-4 z-20 space-y-3">
-                                            {/* Category Headings */}
-                                            <div className="px-1 text-white drop-shadow-[0_2px_8px_rgba(15,23,42,0.35)]">
-                                                <h3 className="text-2xl font-bold tracking-tight">
-                                                    {category.name}
-                                                </h3>
-                                                <div className="flex items-center gap-2 mt-0.5">
-                                                    <p className="text-white/80 text-xs font-medium tracking-wide">
-                                                        {category.itemCount} Products
-                                                    </p>
-                                                    <span className="w-1 h-1 rounded-full bg-white/40" />
-                                                    <p className="text-white/60 text-[10px] font-medium uppercase tracking-wide">
-                                                        {category.ageRange || 'All Ages'}
-                                                    </p>
-                                                </div>
-                                            </div>
+                                        {/* Bottom Floating Category Header (Inside Image Frame) */}
+                                        <div className="absolute bottom-3 left-3 right-3 z-20 px-1 text-white drop-shadow-md">
+                                            <h3 className="text-sm md:text-lg lg:text-xl font-bold tracking-tight line-clamp-1">
+                                                {category.name}
+                                            </h3>
+                                            <p className="text-white/80 text-[10px] md:text-xs font-medium tracking-wide mt-0.5">
+                                                {category.itemCount} Products
+                                            </p>
+                                        </div>
+                                    </div>
 
-                                            {/* DYNAMIC FOOTER POD - Kept your gradients */}
-                                            <div className={`relative overflow-hidden p-4 rounded-xl flex items-center justify-between gap-6 ${bgColor} border ${borderColor} backdrop-blur-md shadow-lg shadow-slate-950/5 transition-all duration-300 group-hover:shadow-xl`}>
+                                    {/* DYNAMIC CONTENT AND FOOTER POD SECTION - Shared rounded edges and borders neatly meet here */}
+                                    <div className={`relative overflow-hidden p-2 md:p-3 rounded-b-lg flex items-center justify-between gap-2 md:gap-4 ${bgColor} border ${borderColor} backdrop-blur-md shadow-xs transition-all duration-300 group-hover:shadow-md flex-1`}>
 
-                                                {/* Your Custom Color Blobs */}
-                                                <div className={`absolute -right-10 -top-10 w-20 h-20 rounded-full bg-linear-to-br ${category.color || gradient} opacity-10 group-hover:opacity-20 transition-opacity duration-300 pointer-events-none z-0`} />
-                                                <div className={`absolute -bottom-10 -left-10 w-20 h-20 rounded-full bg-linear-to-tr ${category.color || gradient} opacity-5 group-hover:opacity-10 transition-opacity duration-300 pointer-events-none z-0`} />
+                                        {/* Background Light Blobs */}
+                                        <div className={`absolute -right-8 -top-8 w-16 h-16 rounded-full bg-linear-to-br ${category.color || gradient} opacity-10 group-hover:opacity-20 transition-opacity duration-300 pointer-events-none z-0`} />
+                                        <div className={`absolute -bottom-8 -left-8 w-16 h-16 rounded-full bg-linear-to-tr ${category.color || gradient} opacity-5 group-hover:opacity-10 transition-opacity duration-300 pointer-events-none z-0`} />
 
-                                                {/* Left Typography Field */}
-                                                <div className="space-y-0.5 flex-1 min-w-0 text-left z-10">
-                                                    <span className="text-[9px] font-bold uppercase tracking-wider text-slate-500/80 block">
-                                                        Overview
-                                                    </span>
-                                                    <p className="text-sm text-slate-800 font-semibold line-clamp-1">
-                                                        {category.description}
-                                                    </p>
-                                                </div>
+                                        {/* Left Typography Field */}
+                                        <div className="hidden sm:block space-y-0.5 flex-1 min-w-0 text-left z-10">
+                                            <span className="text-[9px] font-bold uppercase tracking-wider text-slate-400 block">
+                                                Overview
+                                            </span>
+                                            <p className="text-xs text-slate-700 font-medium line-clamp-1">
+                                                {category.description}
+                                            </p>
+                                        </div>
 
-                                                {/* Rectangular Button with Browse text and Arrow */}
-                                                <div className="shrink-0 z-10">
-                                                    <div className={`flex items-center gap-2 px-4 py-2 rounded-lg bg-linear-to-r ${gradient} text-white text-xs font-bold uppercase tracking-wider transition-all duration-300 group-hover:scale-105 group-hover:shadow-lg group-hover:shadow-${category.color || 'slate'}-500/30`}>
-                                                        <span>Browse</span>
-                                                        <ArrowRight className="w-3.5 h-3.5 transition-transform duration-300 group-hover:translate-x-0.5" />
-                                                    </div>
-                                                </div>
+                                        {/* Action Button Container */}
+                                        <div className="w-full sm:w-auto shrink-0 z-10 flex justify-center sm:justify-end">
+                                            <div className={`w-full sm:w-auto flex items-center justify-center gap-1.5 px-3 py-2 rounded-lg bg-linear-to-r ${gradient} text-white text-[9px] md:text-xs font-bold uppercase tracking-wider transition-all duration-300 group-hover:scale-[1.02] group-hover:shadow-md`}>
+                                                <span>View Collection</span>
+                                                <ArrowRight className="w-3 h-3 transition-transform duration-300 group-hover:translate-x-0.5" />
                                             </div>
                                         </div>
                                     </div>
+
                                 </div>
 
                                 {/* Micro-ambient layout background glow */}
-                                <div className={`absolute -z-10 -bottom-4 right-4 w-24 h-24 rounded-full bg-linear-to-br ${gradient} opacity-0 group-hover:opacity-10 transition-opacity duration-500 blur-xl`} />
+                                <div className={`absolute -z-10 -bottom-2 right-4 w-20 h-20 rounded-full bg-linear-to-br ${gradient} opacity-0 group-hover:opacity-15 transition-opacity duration-500 blur-xl`} />
                             </motion.div>
                         );
                     })}

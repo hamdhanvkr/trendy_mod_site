@@ -73,12 +73,12 @@ const HeroSection = ({ onShopNow, onViewCollection }) => {
 
                 <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
 
-                    {/* Left Content Column */}
+                    {/* Left Content Column - TEXT (first on mobile, first on desktop) */}
                     <motion.div
                         initial={{ opacity: 0, x: -20 }}
                         animate={{ opacity: 1, x: 0 }}
                         transition={{ duration: 0.7, ease: "easeOut" }}
-                        className="text-slate-800 space-y-6 sm:space-y-8 text-center lg:text-left lg:col-span-7 order-2 lg:order-1"
+                        className="text-slate-800 space-y-6 sm:space-y-8 text-center lg:text-left lg:col-span-7 order-1 lg:order-1"
                     >
                         {/* Badge */}
                         <motion.div
@@ -109,7 +109,7 @@ const HeroSection = ({ onShopNow, onViewCollection }) => {
                         <div className="flex flex-wrap gap-2.5 sm:gap-3 justify-center lg:justify-start">
                             {[
                                 { icon: <Gift className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-indigo-500" />, text: "Premium Quality" },
-                                { icon: <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-500" />, text: "5,000+ Happy Kids" },
+                                { icon: <Star className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-amber-500" />, text: "1,000+ Happy Customers" },
                                 { icon: <Play className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-500" />, text: "Educational & Fun" }
                             ].map((feat, i) => (
                                 <div key={i} className="flex items-center gap-2 bg-white border border-slate-100 px-3.5 py-1.5 sm:px-4 sm:py-2 rounded-full shadow-sm">
@@ -143,10 +143,10 @@ const HeroSection = ({ onShopNow, onViewCollection }) => {
                         </div>
                     </motion.div>
 
-                    {/* Right Content Column */}
+                    {/* Right Content Column - IMAGE (second on mobile, second on desktop) */}
                     <motion.div
                         style={{ x: mouseX, y: mouseY }}
-                        className="relative flex justify-center items-center lg:col-span-5 order-1 lg:order-2 will-change-transform"
+                        className="relative flex justify-center items-center lg:col-span-5 order-2 lg:order-2 will-change-transform"
                         onMouseEnter={() => setIsHovering(true)}
                         onMouseLeave={() => setIsHovering(false)}
                     >
@@ -234,6 +234,7 @@ const HeroSection = ({ onShopNow, onViewCollection }) => {
                             <div className="absolute -bottom-4 -left-4 text-2xl sm:text-3xl select-none drop-shadow-md animate-spin [animation-duration:30s] [animation-direction:reverse] pointer-events-none opacity-80">✨</div>
                         </div>
                     </motion.div>
+
                 </div>
             </div>
         </div>

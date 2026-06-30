@@ -6,7 +6,7 @@ function StatsSection() {
     const stats = [
         {
             icon: Gift,
-            value: "10K+",
+            value: "1K+",
             label: "Happy Customers",
             accentBg: "bg-orange-500",
             iconColor: "text-orange-500 dark:text-orange-400",
@@ -16,7 +16,7 @@ function StatsSection() {
         },
         {
             icon: Award,
-            value: "50+",
+            value: "40+",
             label: "Toy Varieties",
             accentBg: "bg-amber-500",
             iconColor: "text-amber-500 dark:text-amber-400",

@@ -86,7 +86,7 @@ function SiteFooter() {
                         <div className="flex flex-wrap gap-4 pt-2">
                             {[
                                 { icon: FaInstagram, color: 'hover:bg-gradient-to-tr hover:from-yellow-500 hover:to-purple-500 hover:text-white', label: 'Instagram', url: 'https://www.instagram.com/trendymod.in?igsh=bTRjemk0aG5sZXpz&utm_source=qr' },
-                                { icon: FaFacebook, color: 'hover:bg-blue-600 hover:text-white', label: 'Facebook', url: 'https://facebook.com' },
+                                { icon: FaFacebook, color: 'hover:bg-blue-600 hover:text-white', label: 'Facebook', url: 'https://www.facebook.com/share/1BS69DHDBh/' },
                                 { icon: FaWhatsapp, color: 'hover:bg-green-600 hover:text-white', label: 'WhatsApp', url: 'https://wa.me/916381374203' },
                             ].map((social, idx) => (
                                 <motion.a

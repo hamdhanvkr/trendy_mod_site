@@ -234,7 +234,7 @@ export const products = [
         image: "/images/panda/Panda Fan.jpeg",
         isNew: true,
         isPopular: false,
-        isFeatured: true,
+        isFeatured: false,
         rating: 4.6,
         reviews: 79,
         inStock: true,
@@ -310,7 +310,7 @@ export const products = [
         image: "/images/shinchan/Chu Chu Shinchan.jpeg",
         isNew: true,
         isPopular: false,
-        isFeatured: true,
+        isFeatured: false,
         rating: 4.5,
         reviews: 45,
         inStock: true,
@@ -416,7 +416,7 @@ export const products = [
         image: "/images/keychain/Horror Keychain.jpg",
         isNew: true,
         isPopular: false,
-        isFeatured: true,
+        isFeatured: false,
         rating: 4.2,
         reviews: 75,
         inStock: true,
@@ -431,7 +431,7 @@ export const products = [
         image: "/images/keychain/Spiderman Keychain.jpg",
         isNew: true,
         isPopular: false,
-        isFeatured: true,
+        isFeatured: false,
         rating: 4.1,
         reviews: 75,
         inStock: true,
@@ -493,7 +493,7 @@ export const products = [
         image: "/images/handmade/Croshet Hanging Pot.jpg",
         isNew: true,
         isPopular: false,
-        isFeatured: true,
+        isFeatured: false,
         rating: 4.1,
         reviews: 76,
         inStock: true,
@@ -526,7 +526,7 @@ export const products = [
         isFeatured: true,
         rating: 4.2,
         reviews: 70,
-        inStock: true,
+        inStock: false,
         description: "Handmade crochet jellyfish featuring a soft texture and adorable design. A unique decorative piece for kids and crochet lovers."
     },
     {
@@ -631,10 +631,10 @@ export const getCategoryTag = (categoryId) => {
 
 export const getCategoryImage = (categoryId) => {
     const images = {
-        'panda': '/images/panda/Light Panda.jpeg',
+        'panda': '/images/panda/Happy Panda.jpeg',
         'shinchan': '/images/shinchan/Shinchan Mobile Stand ( Green ).jpeg',
-        'keychain': '/images/keychain/Red Keychain.jpeg',
-        'handmade': '/images/handmade/Croshet teddy bear.jpg',
+        'keychain': '/images/keychain/Fire Keychain.jpeg',
+        'handmade': '/images/handmade/Croshet Heart Keychain.jpg',
         'toys': '/images/toys/Love you kitty.jpg',
     };
     return images[categoryId] || '/default-category.png';

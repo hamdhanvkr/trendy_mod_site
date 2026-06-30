@@ -75,52 +75,39 @@ const OrderForm = ({ isOpen, onClose, cart, total, onOrderComplete }) => {
         });
 
         let message = "TRENDY MOD TOYS - NEW ORDER\n\n";
-
         message += "*ORDER DATE :* " + orderDate + "\n\n";
+
         message += "===============================\n";
         message += "*CUSTOMER DETAILS*\n";
         message += "===============================\n";
-        message += "Name      : " + formData.name + "\n";
-        message += "Phone     : " + formData.phone + "\n";
-        message += "Address   : " + formData.address + "\n";
-        message += "Landmark  : " + (formData.landmark || "N/A") + "\n";
-        message += "Pincode   : " + formData.pincode + "\n";
-        message += "Region    : " +
-            (formData.location === "tamilnadu"
-                ? "Tamil Nadu"
-                : "Outside Tamil Nadu") +
-            "\n\n";
+
+        // Use dashes/bullets instead of trying to align with spaces
+        message += "• Name      : " + formData.name + "\n";
+        message += "• Phone     : " + formData.phone + "\n";
+        message += "• Address   : " + formData.address + "\n";
+        message += "• Landmark  : " + (formData.landmark || "N/A") + "\n";
+        message += "• Pincode   : " + formData.pincode + "\n";
+        message += "• Region    : " +
+            (formData.location === "tamilnadu" ? "Tamil Nadu" : "Outside Tamil Nadu") + "\n\n";
+
         message += "===============================\n";
         message += "*ORDER ITEMS*\n";
         message += "===============================\n";
 
         cart.forEach((item, idx) => {
             message += `${idx + 1}. ${item.name}\n`;
-            message += `   Qty : ${item.quantity}\n`;
-            message += `   Price : ₹${item.price}\n`;
-            message += `   Total : ₹${item.price * item.quantity}\n\n`;
+            message += `   • Qty    : ${item.quantity}\n`;
+            message += `   • Price  : ₹${item.price}\n`;
+            message += `   • Total  : ₹${item.price * item.quantity}\n\n`;
         });
 
         message += "===============================\n";
         message += "*ORDER SUMMARY*\n";
         message += "===============================\n";
-        message += "Subtotal      : ₹" + subtotal + "\n";
-
-        if (isFreeDelivery) {
-            message += "Delivery Fee  : FREE\n";
-        } else {
-            message += "Delivery Fee  : ₹" + deliveryCharge + "\n";
-        }
-
-        message += "Total Items   : " + totalItems + "\n\n";
-        message += "*Grand Total*   : ₹" + grandTotal + "\n\n";
-
-        // if (formData.instructions) {
-        //     message += "===============================\n";
-        //     message += "SPECIAL INSTRUCTIONS\n";
-        //     message += "===============================\n";
-        //     message += formData.instructions + "\n\n";
-        // }
+        message += "• Total Items  : " + totalItems + "\n";
+        message += "• Sub Total    : ₹" + subtotal + "\n";
+        message += "• Delivery Fee : " + (isFreeDelivery ? "FREE" : "₹" + deliveryCharge) + "\n";
+        message += "• Grand Total  : ₹" + grandTotal + "\n\n";
 
         message += "===============================\n";
         message += "Thank you for shopping with TrendyMod Toys.\n";

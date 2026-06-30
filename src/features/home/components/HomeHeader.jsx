@@ -41,9 +41,6 @@ const getDynamicCategories = () => {
 
 const CategoryList = ({ categories, onCategoryClick }) => (
     <div className="flex flex-col gap-0.5">
-        <span className="text-[10px] font-semibold text-slate-400 uppercase tracking-wider mb-1.5 px-2">
-            Collections
-        </span>
         {categories.map((cat) => (
             <button
                 key={cat.id}
@@ -352,7 +349,7 @@ const HomeHeader = ({
                         >
                             <div className="w-12 h-1 bg-slate-200 rounded-full mx-auto mb-4" />
                             <div className="flex items-center justify-between mb-4">
-                                <h3 className="text-sm font-bold text-slate-800">Browse Catalog</h3>
+                                <h3 className="text-sm font-bold text-slate-800">Browse Collection</h3>
                                 <button
                                     onClick={closeMobileDrawer}
                                     className="p-1 rounded-full bg-slate-100 text-slate-500 hover:bg-slate-200 transition-colors"

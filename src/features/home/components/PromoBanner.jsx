@@ -173,15 +173,6 @@ const PromoBanner = ({
                                             <span>{banner.buttonText}</span>
                                             <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4" />
                                         </motion.button>
-
-                                        <motion.button
-                                            whileHover={{ backgroundColor: "rgba(255,255,255,0.08)" }}
-                                            whileTap={{ scale: 0.98 }}
-                                            onClick={banner.onClick} // You can also use the same handler for "Learn More"
-                                            className="px-4 sm:px-6 md:px-8 py-2 sm:py-2.5 md:py-3 rounded-lg font-semibold text-xs sm:text-sm md:text-base text-white border border-white/20 hover:border-white/40 transition-all backdrop-blur-sm flex items-center justify-center"
-                                        >
-                                            Learn More
-                                        </motion.button>
                                     </motion.div>
                                 </div>
 
